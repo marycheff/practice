@@ -1,45 +1,32 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-
-interface AuthState {
-    token: string | null
-    email: string | null
-    user_tenant_bot_count: number | null
-    tenant_id: string | null
-}
+import { AuthState } from "../types/auth"
 
 const initialState: AuthState = {
     token: null,
+    isAuthenticated: false,
     email: null,
-    user_tenant_bot_count: null,
-    tenant_id: null,
+    tenantId: null,
 }
 
 const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        setAuthData: (
-            state,
-            action: PayloadAction<{
-                token: string
-                email: string
-                user_tenant_bot_count: number
-                tenant_id: string
-            }>
-        ) => {
-            state.token = action.payload.token
-            state.email = action.payload.email
-            state.user_tenant_bot_count = action.payload.user_tenant_bot_count
-            state.tenant_id = action.payload.tenant_id
+        setCredentials: (state, action: PayloadAction<{ token: string; email: string; tenantId: string }>) => {
+            const { token, email, tenantId } = action.payload
+            state.token = token
+            state.isAuthenticated = true
+            state.email = email
+            state.tenantId = tenantId
         },
-        clearAuthData: state => {
+        logout: state => {
             state.token = null
+            state.isAuthenticated = false
             state.email = null
-            state.user_tenant_bot_count = null
-            state.tenant_id = null
+            state.tenantId = null
         },
     },
 })
 
-export const { setAuthData, clearAuthData } = authSlice.actions
+export const { setCredentials, logout } = authSlice.actions
 export default authSlice.reducer

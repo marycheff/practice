@@ -4,7 +4,7 @@ import { useEffect } from "react"
 
 const ChatBot = () => {
     useEffect(() => {
-        const scriptId = "chatling-chatbot-script"
+        const scriptId = "chatbot-script"
 
         if (!document.getElementById(scriptId)) {
             const script = document.createElement("script")

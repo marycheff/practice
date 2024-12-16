@@ -1,19 +1,27 @@
-import { LoginResponse } from "../types/api"
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { RootState } from "../store/store"
+import { LoginRequest, LoginResponse } from "../types/auth"
 
-export async function login(email: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    })
+export const api = createApi({
+    baseQuery: fetchBaseQuery({
+        baseUrl: process.env.NEXT_PUBLIC_API_URL,
+        prepareHeaders: (headers, { getState }) => {
+            const token = (getState() as RootState).auth.token
+            if (token) {
+                headers.set("authorization", `Bearer ${token}`)
+            }
+            return headers
+        },
+    }),
+    endpoints: builder => ({
+        login: builder.mutation<LoginResponse, LoginRequest>({
+            query: credentials => ({
+                url: "/login",
+                method: "POST",
+                body: credentials,
+            }),
+        }),
+    }),
+})
 
-    if (!response.ok) {
-        console.error("Ошибка авторизации:", response.status, response.statusText)
-        throw new Error("Ошибка авторизации")
-    }
-
-    const data: LoginResponse = await response.json()
-    console.log("Токен обновлен")
-    console.log(data.data.token)
-    return data
-}
+export const { useLoginMutation } = api
