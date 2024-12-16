@@ -1,6 +1,10 @@
 "use client"
+
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+
+import ChatHistory from "../../components/ChatHistory"
+import Loader from "../../components/loader/Loader"
 import { useAuth } from "../../hooks/useAuth"
 import { RootState } from "../../store/store"
 
@@ -9,7 +13,10 @@ const AdminPage = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const { handleLogin, loginAttempted } = useAuth()
-
+    const [showChatHistory, setShowChatHistory] = useState(false)
+    const toggleChatHistory = () => {
+        setShowChatHistory(prev => !prev)
+    }
     useEffect(() => {
         const fetchToken = async () => {
             if (!loginAttempted) {
@@ -17,7 +24,7 @@ const AdminPage = () => {
                     await handleLogin()
                     setError(null)
                 } catch (error: unknown) {
-                    setError(`Ошибка: ${error instanceof Error ? error.message : "Неизвестная ошибка"}`)
+                    setError(`Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`)
                 } finally {
                     setLoading(false)
                 }
@@ -25,23 +32,29 @@ const AdminPage = () => {
                 setLoading(false)
             }
         }
+
         fetchToken()
     }, [handleLogin, loginAttempted])
 
     if (loading) {
-        return <div>Загрузка...</div>
+        return <Loader />
     }
-
     if (error) {
-        return <div>Ошибка: {error}</div>
+        return <div>Error: {error}</div>
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold mb-2">Админ панель</h1>
-                <p className="mb-2">Вы вошли как админ. Токен обновлен</p>
-                <p className="text-xs text-gray-600 mt-2 px-7 break-all">Token: {token}</p>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+            <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
+                <h1 className="text-2xl font-bold mb-4">Админ панель</h1>
+                <p className="text-xs text-gray-600 mb-4 break-all">Token: {token}</p>
+
+                <button
+                    onClick={toggleChatHistory}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                    {showChatHistory ? "Скрыть" : "Показать историю"}
+                </button>
+                {showChatHistory && <ChatHistory />}
             </div>
         </div>
     )

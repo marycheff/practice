@@ -1,12 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { RootState } from "../store/store"
+import { getCookie } from "cookies-next"
 import { LoginRequest, LoginResponse } from "../types/auth"
+import { ChatHistoryResponse } from "../types/chat-history"
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: process.env.NEXT_PUBLIC_API_URL,
-        prepareHeaders: (headers, { getState }) => {
-            const token = (getState() as RootState).auth.token
+        prepareHeaders: headers => {
+            const token = getCookie("token")
             if (token) {
                 headers.set("authorization", `Bearer ${token}`)
             }
@@ -21,7 +22,13 @@ export const api = createApi({
                 body: credentials,
             }),
         }),
+        getChatHistory: builder.query<ChatHistoryResponse, void>({
+            query: () => ({
+                url: `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}`,
+                method: "GET",
+            }),
+        }),
     }),
 })
 
-export const { useLoginMutation } = api
+export const { useLoginMutation, useGetChatHistoryQuery } = api
