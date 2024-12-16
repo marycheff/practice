@@ -37,8 +37,9 @@ const AdminPage = () => {
     }, [handleLogin, loginAttempted])
 
     if (loading) {
-        return <Loader />
+        return <Loader isOverlay={true} />
     }
+
     if (error) {
         return <div>Error: {error}</div>
     }

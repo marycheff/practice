@@ -1,8 +1,8 @@
 import "./Loader.css"
 
-const Loader = () => {
+const Loader = ({ isOverlay = false }) => {
     return (
-        <div className="loader-overlay">
+        <div className={isOverlay ? "loader-overlay" : "loader-inline"}>
             <div className="loader"></div>
         </div>
     )
