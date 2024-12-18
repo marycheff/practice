@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { getCookie } from "cookies-next"
+import { v4 as uuid } from "uuid"
 import { LoginRequest, LoginResponse } from "../types/auth"
+import { ChatRequest, ChatResponse } from "../types/chat"
 import { ChatHistoryResponse } from "../types/chat-history"
-
 export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -15,6 +16,7 @@ export const api = createApi({
         },
     }),
     endpoints: builder => ({
+        // Авторизация
         login: builder.mutation<LoginResponse, LoginRequest>({
             query: credentials => ({
                 url: "/login",
@@ -22,13 +24,26 @@ export const api = createApi({
                 body: credentials,
             }),
         }),
+        // Получение истории чата
         getChatHistory: builder.query<ChatHistoryResponse, void>({
             query: () => ({
                 url: `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}`,
                 method: "GET",
             }),
         }),
+        // Отправка вопроса
+        sendChatQuestion: builder.mutation<ChatResponse, { question: string }>({
+            query: ({ question }) => ({
+                url: `/chat/${process.env.NEXT_PUBLIC_BOT_ID}/application/`,
+                method: "POST",
+                body: {
+                    question,
+                    origin: window.location.href,
+                    conversation_id: uuid(),
+                } as ChatRequest,
+            }),
+        }),
     }),
 })
 
-export const { useLoginMutation, useGetChatHistoryQuery } = api
+export const { useLoginMutation, useGetChatHistoryQuery, useSendChatQuestionMutation } = api

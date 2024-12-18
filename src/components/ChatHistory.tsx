@@ -19,15 +19,23 @@ const ChatHistory = () => {
                     <div className="mt-4">
                         <h2 className="text-xl font-semibold mb-2">История сообщений</h2>
                         <p className="mb-2">Всего сообщений: {formattedChatHistory.total}</p>
-                        <ul className="space-y-4">
+                        <div className="space-y-4">
                             {formattedChatHistory.messages.map((message, index) => (
-                                <li key={index} className="border-b pb-2">
-                                    <p className="font-semibold">{message.question}</p>
-                                    <p>{message.answer}</p>
-                                    <p className="text-xs text-gray-500">{message.created_at}</p>
-                                </li>
+                                <div key={index} className="flex flex-col">
+                                    <div className="flex justify-end mb-1">
+                                        <div className="bg-blue-500 text-white p-2 rounded-xl max-w-[70%]">
+                                            <p className="font-semibold">{message.question}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-start">
+                                        <div className="bg-gray-200 p-2 rounded-xl max-w-[70%]">
+                                            <p className="font-semibold">{message.answer}</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mb-5 ml-1">{message.created_at}</p>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 )
             )}
