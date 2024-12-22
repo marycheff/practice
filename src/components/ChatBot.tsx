@@ -11,7 +11,7 @@ const ChatBot = () => {
             script.async = true
             script.id = scriptId
             script.src = "https://chatbot-dist.s3.us-east-2.amazonaws.com/chatbot/fullpage_build_chatbot.js"
-            script.setAttribute("chatbotId", "29daab97-8051-42e6-ae40-1322a29f85bf")
+            script.setAttribute("chatbotId", "bed0cfe4-3120-4536-a479-f28bd579848e")
             script.setAttribute("targetId", "chat-container")
             document.body.appendChild(script)
         }

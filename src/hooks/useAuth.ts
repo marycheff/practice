@@ -1,16 +1,17 @@
-import { getCookie, setCookie } from "cookies-next"
-import { useCallback, useState } from "react"
+import { deleteCookie, getCookie, setCookie } from "cookies-next"
+import { useCallback } from "react"
 import { useDispatch } from "react-redux"
-import { useLoginMutation } from "../lib/api"
+import { useLazyCheckTokenQuery, useLoginMutation } from "../lib/api"
 import { setCredentials } from "../store/authSlice"
+import { isTokenExpired } from "../utils/check-token-expired"
 
 export const useAuth = () => {
     const dispatch = useDispatch()
     const [login] = useLoginMutation()
-    const [loginAttempted, setLoginAttempted] = useState(false)
-
+    const [triggerCheckToken] = useLazyCheckTokenQuery() 
+    
+    // Логин с сохранением токена
     const handleLogin = useCallback(async () => {
-        if (loginAttempted) return
         try {
             const email = process.env.NEXT_PUBLIC_API_EMAIL
             const password = process.env.NEXT_PUBLIC_API_PASSWORD
@@ -18,23 +19,28 @@ export const useAuth = () => {
             if (!email || !password) {
                 throw new Error("Email или password не найдены в .env")
             }
-
             const result = await login({ email, password }).unwrap()
             const { token, tenant_id } = result.data
-
             dispatch(setCredentials({ token, email, tenantId: tenant_id }))
             setCookie("token", token, { maxAge: 30 * 24 * 60 * 60 })
         } catch (error) {
             console.error("Ошибка входа:", error)
-        } finally {
-            setLoginAttempted(true)
         }
-    }, [dispatch, login, loginAttempted])
+    }, [dispatch, login])
 
-    const checkToken = () => {
-        const token = getCookie("token")
-        return !!token
-    }
+    // Проверка токена
+    const checkToken = useCallback(async (): Promise<boolean> => {
+        const token = getCookie("token") as string
+        if (!token) {
+            return false
+        }
+        if (isTokenExpired(token)) {
+            deleteCookie("token")
+            return false
+        }
+        const { data: isValid } = await triggerCheckToken()
+        return isValid || false
+    }, [triggerCheckToken])
 
-    return { handleLogin, checkToken, loginAttempted }
+    return { handleLogin, checkToken }
 }

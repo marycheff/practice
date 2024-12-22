@@ -1,9 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { getCookie } from "cookies-next"
-import { v4 as uuid } from "uuid"
+import { deleteCookie, getCookie } from "cookies-next"
 import { LoginRequest, LoginResponse } from "../types/auth"
-import { ChatRequest, ChatResponse } from "../types/chat"
 import { ChatHistoryResponse } from "../types/chat-history"
+
+
+if (!process.env.NEXT_PUBLIC_API_EMAIL || !process.env.NEXT_PUBLIC_API_PASSWORD) {
+    throw new Error("Email или password не найдены в .env")
+}
+if (!process.env.NEXT_PUBLIC_BOT_ID) {
+    throw new Error("Переменная NEXT_PUBLIC_BOT_ID не найдена в .env файле")
+}
+
 export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -31,19 +38,27 @@ export const api = createApi({
                 method: "GET",
             }),
         }),
-        // Отправка вопроса
-        sendChatQuestion: builder.mutation<ChatResponse, { question: string }>({
-            query: ({ question }) => ({
-                url: `/chat/${process.env.NEXT_PUBLIC_BOT_ID}/application/`,
-                method: "POST",
-                body: {
-                    question,
-                    origin: window.location.href,
-                    conversation_id: uuid(),
-                } as ChatRequest,
-            }),
+        // Проверка токена на рандомном запросе
+        checkToken: builder.query<boolean, void>({
+            queryFn: async (_, _queryApi, _extraOptions, fetchBaseQuery) => {
+                try {
+                    const response = await fetchBaseQuery({
+                        url: "/user/get_all_user_bots",
+                        method: "GET",
+                    })
+                    if (response.error) {
+                        deleteCookie("token")
+                        return { data: false }
+                    }
+                    const result = (await response.data) as { status: string }
+                    return { data: result.status === "success" }
+                } catch (error) {
+                    console.error("Ошибка при запросе проверки токена:", error)
+                    return { data: false }
+                }
+            },
         }),
     }),
 })
 
-export const { useLoginMutation, useGetChatHistoryQuery, useSendChatQuestionMutation } = api
+export const { useLoginMutation, useGetChatHistoryQuery, useLazyCheckTokenQuery } = api

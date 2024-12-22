@@ -1,49 +1,47 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
 
+import { getCookie } from "cookies-next"
 import ChatHistory from "../../components/ChatHistory"
 import Loader from "../../components/loader/Loader"
 import { useAuth } from "../../hooks/useAuth"
-import { RootState } from "../../store/store"
 
 const AdminPage = () => {
-    const token = useSelector((state: RootState) => state.auth.token)
+    // const token = useSelector((state: RootState) => state.auth.token)
+    const token = getCookie("token") as string
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const { handleLogin, loginAttempted } = useAuth()
+    const { handleLogin, checkToken } = useAuth()
     const [showChatHistory, setShowChatHistory] = useState(false)
-    const toggleChatHistory = () => {
-        setShowChatHistory(prev => !prev)
-    }
+
+    const toggleChatHistory = () => setShowChatHistory(prev => !prev)
+
     useEffect(() => {
-        const fetchToken = async () => {
-            if (!loginAttempted) {
-                try {
+        const initializeAuth = async () => {
+            try {
+                const isTokenValid = await checkToken()
+                if (!isTokenValid) {
                     await handleLogin()
-                    setError(null)
-                } catch (error: unknown) {
-                    setError(`Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`)
-                } finally {
-                    setLoading(false)
                 }
-            } else {
+                setError(null)
+            } catch (error: unknown) {
+                setError(`Ошибка: ${error instanceof Error ? error.message : "Неизвестная ошибка"}`)
+            } finally {
                 setLoading(false)
             }
         }
 
-        fetchToken()
-    }, [handleLogin, loginAttempted])
+        initializeAuth()
+    }, [handleLogin, checkToken])
 
     if (loading) {
         return <Loader isOverlay={true} />
     }
 
     if (error) {
-        return <div>Error: {error}</div>
+        return <div>Ошибка: {error}</div>
     }
-
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
             <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
