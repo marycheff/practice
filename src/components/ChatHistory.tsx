@@ -28,7 +28,7 @@ const ChatHistory = () => {
                                         </div>
                                     </div>
                                     <div className="flex justify-start">
-                                        <div className="bg-gray-200 p-2 rounded-xl max-w-[70%]">
+                                        <div className="bg-gray-400 p-2 rounded-xl max-w-[70%]">
                                             <p className="font-semibold">{message.answer}</p>
                                         </div>
                                     </div>
