@@ -1,25 +1,48 @@
-import { Box, Typography, useTheme } from "@mui/material"
-import { useGetChatHistoryQuery } from "../lib/api"
-import { tokens } from "../theme"
-import { formatChatHistory } from "../utils/format-chat-history"
-import Loader from "./loader/Loader"
+import Loader from "@/components/loader/Loader"
+import { useGetChatHistoryQuery } from "@/lib/api"
+import { tokens } from "@/theme"
+import { formatChatHistory } from "@/utils/format-chat-history"
+import CachedIcon from "@mui/icons-material/Cached"
+import { Box, IconButton, Typography, useTheme } from "@mui/material"
+import { useEffect } from "react"
 
 const ChatHistory = () => {
-    const { data: chatHistoryData, isLoading, error } = useGetChatHistoryQuery(undefined)
+    const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
+
+    // Функция для обновления данных
+    const updateChatHistory = () => {
+        refetch()
+    }
+
+    // Вызов функции обновления при первой загрузке страницы
+    useEffect(() => {
+        updateChatHistory()
+    }, [])
 
     if (error) return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
 
     // Сортировка сообщений по дате
     const formattedChatHistory = chatHistoryData ? formatChatHistory(chatHistoryData) : null
 
+    if (isFetching) return <Loader isOverlay={true} />
+
     return (
-        <div className="mt-4">
-            {isLoading ? (
-                <Loader isOverlay={true} />
-            ) : (
-                formattedChatHistory && (
+        <>
+            {formattedChatHistory && (
+                <Box
+                    sx={{
+                        p: 3,
+                        mt: 4,
+                        backgroundColor: colors.primary[400],
+                        color: colors.grey[100],
+                    }}>
+                    <Box display="flex" justifyContent="flex-end" mb={2}>
+                        <IconButton onClick={updateChatHistory}>
+                            <CachedIcon />
+                        </IconButton>
+                    </Box>
                     <Box display="flex" flexDirection="column" gap={2}>
                         {formattedChatHistory.messages.map((message, index) => (
                             <Box
@@ -55,7 +78,7 @@ const ChatHistory = () => {
                                                 borderRadius: "8px",
                                                 maxWidth: "70%",
                                             }}>
-                                            {message.answer.trim() == "I don't know." ? (
+                                            {message.answer.trim() === "I don't know." ? (
                                                 <Typography>[нет ответа от бота]</Typography>
                                             ) : (
                                                 <Typography>{message.answer}</Typography>
@@ -69,9 +92,9 @@ const ChatHistory = () => {
                             </Box>
                         ))}
                     </Box>
-                )
+                </Box>
             )}
-        </div>
+        </>
     )
 }
 

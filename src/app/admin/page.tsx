@@ -32,13 +32,8 @@ const AdminPage = () => {
         initializeAuth()
     }, [handleLogin, checkToken])
 
-    if (loading) {
-        return <Loader isOverlay={true} />
-    }
-
-    if (error) {
-        return <Typography color={colors.redAccent[500]}>{error}</Typography>
-    }
+    if (loading) return <Loader isOverlay={true} />
+    if (error) return <Typography color={colors.redAccent[500]}>{error}</Typography>
 
     return (
         <Container maxWidth="md">
@@ -60,7 +55,7 @@ const AdminPage = () => {
                         wordBreak: "break-all",
                         color: colors.greenAccent[400],
                     }}>
-                    Token: {token}
+                    {token}
                 </Typography>
             </Box>
         </Container>

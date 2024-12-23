@@ -1,12 +1,12 @@
 "use client"
 
+import { store } from "@/store/store"
+import { ColorModeContext, themeSettings } from "@/theme"
 import { PaletteMode } from "@mui/material"
 import CssBaseline from "@mui/material/CssBaseline"
 import { ThemeProvider as MUIThemeProvider } from "@mui/material/styles"
 import { ReactNode, useMemo, useState } from "react"
 import { Provider } from "react-redux"
-import { ColorModeContext, themeSettings } from "../theme"
-import { store } from "./store"
 
 export function Providers({ children }: { children: ReactNode }) {
     const [mode, setMode] = useState<PaletteMode>("dark")

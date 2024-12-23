@@ -1,15 +1,16 @@
 "use client"
 
+import { tokens } from "@/theme"
 import HistoryIcon from "@mui/icons-material/History"
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined"
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace"
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined"
+import ReplyIcon from "@mui/icons-material/Reply"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import Link from "next/link"
 import { useState } from "react"
 import { Menu, MenuItem, ProSidebar } from "react-pro-sidebar"
 import "react-pro-sidebar/dist/css/styles.css"
-import { tokens } from "../theme"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Item = ({ title, to, icon, selected, setSelected }: any) => {
@@ -44,7 +45,7 @@ const Sidebar = () => {
             sx={{
                 "& .pro-sidebar-inner": {
                     background: `${colors.primary[400]} !important`,
-                    height: "100%", // Занять всю высоту родителя
+                    height: "100%",
                 },
                 "& .pro-icon-wrapper": {
                     backgroundColor: "transparent !important",
@@ -99,6 +100,13 @@ const Sidebar = () => {
                             title="История чатов"
                             to="/admin/chat-history"
                             icon={<HistoryIcon />}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
+                        <Item
+                            title="Ответить"
+                            to="/admin/reply"
+                            icon={<ReplyIcon />}
                             selected={selected}
                             setSelected={setSelected}
                         />

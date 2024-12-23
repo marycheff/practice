@@ -1,7 +1,8 @@
+import { LiveAgentReplyRequest, LiveAgentReplyResponse } from "@/types/admin-reply"
+import { LoginRequest, LoginResponse } from "@/types/auth"
+import { ChatHistoryResponse } from "@/types/chat-history"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie } from "cookies-next"
-import { LoginRequest, LoginResponse } from "../types/auth"
-import { ChatHistoryResponse } from "../types/chat-history"
 
 if (!process.env.NEXT_PUBLIC_API_EMAIL || !process.env.NEXT_PUBLIC_API_PASSWORD) {
     throw new Error("Email или password не найдены в .env")
@@ -57,7 +58,15 @@ export const api = createApi({
                 }
             },
         }),
+        // Ответ живого агента
+        liveAgentReply: builder.mutation<LiveAgentReplyResponse, LiveAgentReplyRequest>({
+            query: replyData => ({
+                url: "/bot/reply_with_live_agent/",
+                method: "POST",
+                body: replyData,
+            }),
+        }),
     }),
 })
 
-export const { useLoginMutation, useGetChatHistoryQuery, useLazyCheckTokenQuery } = api
+export const { useLoginMutation, useGetChatHistoryQuery, useLazyCheckTokenQuery, useLiveAgentReplyMutation } = api

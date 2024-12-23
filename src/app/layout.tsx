@@ -1,6 +1,6 @@
+import { Providers } from "@/store/providers"
 import type { Metadata } from "next"
 import { Geist } from "next/font/google"
-import { Providers } from "../store/providers"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -21,7 +21,6 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={geistSans.className}>
-                
                 <Providers>{children}</Providers>
             </body>
         </html>

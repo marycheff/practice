@@ -1,9 +1,9 @@
+import { useLazyCheckTokenQuery, useLoginMutation } from "@/lib/api"
+import { setCredentials } from "@/store/authSlice"
+import { isTokenExpired } from "@/utils/check-token-expired"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 import { useCallback } from "react"
 import { useDispatch } from "react-redux"
-import { useLazyCheckTokenQuery, useLoginMutation } from "../lib/api"
-import { setCredentials } from "../store/authSlice"
-import { isTokenExpired } from "../utils/check-token-expired"
 
 export const useAuth = () => {
     const dispatch = useDispatch()
