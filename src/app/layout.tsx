@@ -21,6 +21,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={geistSans.className}>
+                
                 <Providers>{children}</Providers>
             </body>
         </html>

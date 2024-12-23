@@ -3,7 +3,6 @@ import { deleteCookie, getCookie } from "cookies-next"
 import { LoginRequest, LoginResponse } from "../types/auth"
 import { ChatHistoryResponse } from "../types/chat-history"
 
-
 if (!process.env.NEXT_PUBLIC_API_EMAIL || !process.env.NEXT_PUBLIC_API_PASSWORD) {
     throw new Error("Email или password не найдены в .env")
 }
@@ -43,7 +42,7 @@ export const api = createApi({
             queryFn: async (_, _queryApi, _extraOptions, fetchBaseQuery) => {
                 try {
                     const response = await fetchBaseQuery({
-                        url: "/user/get_all_user_bots",
+                        url: "/user/get_all_user_bots/",
                         method: "GET",
                     })
                     if (response.error) {

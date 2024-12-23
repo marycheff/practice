@@ -8,11 +8,12 @@ import { isTokenExpired } from "../utils/check-token-expired"
 export const useAuth = () => {
     const dispatch = useDispatch()
     const [login] = useLoginMutation()
-    const [triggerCheckToken] = useLazyCheckTokenQuery() 
-    
+    const [triggerCheckToken] = useLazyCheckTokenQuery()
+
     // Логин с сохранением токена
     const handleLogin = useCallback(async () => {
         try {
+            console.log("Вход")
             const email = process.env.NEXT_PUBLIC_API_EMAIL
             const password = process.env.NEXT_PUBLIC_API_PASSWORD
 

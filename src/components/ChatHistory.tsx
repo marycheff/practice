@@ -1,9 +1,13 @@
+import { Box, Typography, useTheme } from "@mui/material"
 import { useGetChatHistoryQuery } from "../lib/api"
+import { tokens } from "../theme"
 import { formatChatHistory } from "../utils/format-chat-history"
 import Loader from "./loader/Loader"
 
 const ChatHistory = () => {
     const { data: chatHistoryData, isLoading, error } = useGetChatHistoryQuery(undefined)
+    const theme = useTheme()
+    const colors = tokens(theme.palette.mode)
 
     if (error) return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
 
@@ -13,30 +17,58 @@ const ChatHistory = () => {
     return (
         <div className="mt-4">
             {isLoading ? (
-                <Loader />
+                <Loader isOverlay={true} />
             ) : (
                 formattedChatHistory && (
-                    <div className="mt-4">
-                        <h2 className="text-xl font-semibold mb-2">История сообщений</h2>
-                        <p className="mb-2">Всего сообщений: {formattedChatHistory.total}</p>
-                        <div className="space-y-4">
-                            {formattedChatHistory.messages.map((message, index) => (
-                                <div key={index} className="flex flex-col">
-                                    <div className="flex justify-end mb-1">
-                                        <div className="bg-blue-500 text-white p-2 rounded-xl max-w-[70%]">
-                                            <p className="font-semibold">{message.question}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-start">
-                                        <div className="bg-gray-400 p-2 rounded-xl max-w-[70%]">
-                                            <p className="font-semibold">{message.answer}</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-gray-500 mb-5 ml-1">{message.created_at}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <Box display="flex" flexDirection="column" gap={2}>
+                        {formattedChatHistory.messages.map((message, index) => (
+                            <Box
+                                key={index}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    backgroundColor: colors.primary[600],
+                                    borderRadius: "15px",
+                                    p: 2,
+                                }}>
+                                {message.question && (
+                                    <Box display="flex" justifyContent="flex-end" mb={1}>
+                                        <Box
+                                            sx={{
+                                                backgroundColor: colors.blueAccent[600],
+                                                color: colors.grey[100],
+                                                p: 1,
+                                                borderRadius: "8px",
+                                                maxWidth: "70%",
+                                            }}>
+                                            <Typography>{message.question}</Typography>
+                                        </Box>
+                                    </Box>
+                                )}
+                                {message.answer && (
+                                    <Box display="flex" justifyContent="flex-start">
+                                        <Box
+                                            sx={{
+                                                backgroundColor: colors.greenAccent[700],
+                                                color: colors.grey[100],
+                                                p: 1,
+                                                borderRadius: "8px",
+                                                maxWidth: "70%",
+                                            }}>
+                                            {message.answer.trim() == "I don't know." ? (
+                                                <Typography>[нет ответа от бота]</Typography>
+                                            ) : (
+                                                <Typography>{message.answer}</Typography>
+                                            )}
+                                        </Box>
+                                    </Box>
+                                )}
+                                <Typography variant="caption" color={colors.grey[600]} ml={0.3}>
+                                    {message.created_at}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
                 )
             )}
         </div>
