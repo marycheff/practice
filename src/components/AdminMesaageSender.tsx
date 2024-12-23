@@ -1,10 +1,8 @@
 "use client"
-import Loader from "@/components/loader/Loader"
-import { useAuth } from "@/hooks/useAuth"
 import { useLiveAgentReplyMutation } from "@/lib/api"
 import { tokens } from "@/theme"
 import { Box, Button, TextField, useTheme } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
 interface LiveAgentMessageSenderProps {
     conversationId: string // Пропс для передачи conversationId
@@ -16,24 +14,6 @@ const AdminMessageSender: React.FC<LiveAgentMessageSenderProps> = ({ conversatio
     const [sendLiveAgentReply, { isLoading }] = useLiveAgentReplyMutation()
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
-    const [loading, setLoading] = useState(true)
-    const { handleLogin, checkToken } = useAuth()
-
-    useEffect(() => {
-        const initializeAuth = async () => {
-            try {
-                const isTokenValid = await checkToken()
-                if (!isTokenValid) {
-                    await handleLogin()
-                }
-            } finally {
-                setLoading(false)
-            }
-        }
-        initializeAuth()
-    }, [handleLogin, checkToken])
-
-    if (loading) return <Loader isOverlay={true} />
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()

@@ -3,17 +3,27 @@ import AdminMessageSender from "@/components/AdminMesaageSender"
 import ChatConversationHistory from "@/components/ChatConversationHistory"
 
 import Loader from "@/components/loader/Loader"
+import { useAuth } from "@/hooks/useAuth"
 import { Container } from "@mui/material"
 import { useEffect, useState } from "react"
 
 const LiveAgentTestPage = () => {
+    const conversationId = process.env.NEXT_PUBLIC_CONVERSATION_ID || "NO CONV.ID"
     const [loading, setLoading] = useState(true)
-    const conversationId = process.env.NEXT_PUBLIC_CONVERSATION_ID || ""
-
+    const { handleLogin, checkToken } = useAuth()
     useEffect(() => {
-        // Здесь можно добавить логику для проверки токена, если это необходимо
-        setLoading(false)
-    }, [])
+        const initializeAuth = async () => {
+            try {
+                const isTokenValid = await checkToken()
+                if (!isTokenValid) {
+                    await handleLogin()
+                }
+            } finally {
+                setLoading(false)
+            }
+        }
+        initializeAuth()
+    }, [handleLogin, checkToken])
 
     if (loading) return <Loader isOverlay={true} />
 
