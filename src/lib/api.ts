@@ -1,9 +1,10 @@
 import { LiveAgentReplyRequest, LiveAgentReplyResponse } from "@/types/admin-reply"
 import { LoginRequest, LoginResponse } from "@/types/auth"
-import { ChatHistoryResponse } from "@/types/chat-history"
+import { ChatHistoryResponse } from "@/types/chat-history" // Импортируйте существующий тип
+
+import { ChatHistoryConversationResponse } from "@/types/chat-history-conversation"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie } from "cookies-next"
-
 if (!process.env.NEXT_PUBLIC_API_EMAIL || !process.env.NEXT_PUBLIC_API_PASSWORD) {
     throw new Error("Email или password не найдены в .env")
 }
@@ -38,6 +39,13 @@ export const api = createApi({
                 method: "GET",
             }),
         }),
+        // Получение истории чата по conversation_Id
+        getConversationChatHistory: builder.query<ChatHistoryConversationResponse, string>({
+            query: conversationId => ({
+                url: `https://api.buildchatbot.ai/api/v1/conversation/chat-history/${conversationId}`,
+                method: "GET",
+            }),
+        }),
         // Проверка токена на рандомном запросе
         checkToken: builder.query<boolean, void>({
             queryFn: async (_, _queryApi, _extraOptions, fetchBaseQuery) => {
@@ -69,4 +77,10 @@ export const api = createApi({
     }),
 })
 
-export const { useLoginMutation, useGetChatHistoryQuery, useLazyCheckTokenQuery, useLiveAgentReplyMutation } = api
+export const {
+    useLoginMutation,
+    useGetChatHistoryQuery,
+    useGetConversationChatHistoryQuery, // Экспортируйте новый хук
+    useLazyCheckTokenQuery,
+    useLiveAgentReplyMutation,
+} = api
