@@ -52,7 +52,7 @@ const AdminReply: React.FC = () => {
                     variant="contained"
                     disabled={isLoading}
                     sx={{
-                        backgroundColor: colors.greenAccent[500],
+                        backgroundColor: colors.greenAccent[700],
                         "&:hover": {
                             backgroundColor: colors.greenAccent[600],
                         },

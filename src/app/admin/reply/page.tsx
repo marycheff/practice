@@ -1,5 +1,5 @@
 "use client"
-import AdminReply from "@/components/AdminReply"
+import AdminReply from "@/components/UI/AdminReply"
 import ChatConversationHistory from "@/components/ConversationHistory"
 import Loader from "@/components/UI/loader/Loader"
 import { ChatProvider } from "@/contexts/ChatContext"

@@ -31,16 +31,17 @@ const ChatConversationHistory: React.FC = () => {
             {isLoading ? (
                 <Loader isOverlay={false} text="Загрузка сообщений" />
             ) : formattedChatHistory && formattedChatHistory.messages.length > 0 ? (
-                <Box display="flex" flexDirection="column" gap={2}>
+                <Box
+                    sx={{
+                        borderRadius: "15px",
+                        backgroundColor: colors.primary[600],
+                        p: 2,
+                    }}>
                     {formattedChatHistory.messages.map((message, index) => (
                         <Box
                             key={index}
                             sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                backgroundColor: colors.primary[600],
-                                borderRadius: "15px",
-                                p: 2,
+                                my: 2,
                             }}>
                             {message.question && (
                                 <Box display="flex" justifyContent="flex-end" mb={1}>

@@ -40,7 +40,7 @@ export const api = createApi({
         // Получение истории чата по conversation_Id
         getConversationChatHistory: builder.query<ChatHistoryResponse, string>({
             query: conversationId => ({
-                url: `https://api.buildchatbot.ai/api/v1/conversation/chat-history/${conversationId}`,
+                url: `${process.env.NEXT_PUBLIC_API_URL}/conversation/chat-history/${conversationId}`,
                 method: "GET",
             }),
         }),
