@@ -1,15 +1,20 @@
 "use client"
-import AdminMessageSender from "@/components/AdminMesaageSender"
-import ConversationHistory from "@/components/ConversationHistory"
-
-import Loader from "@/components/loader/Loader"
+import AdminReply from "@/components/AdminReply"
+import ChatConversationHistory from "@/components/ConversationHistory"
+import Loader from "@/components/UI/loader/Loader"
+import { ChatProvider } from "@/contexts/ChatContext"
 import { useAuth } from "@/hooks/useAuth"
-import { Container } from "@mui/material"
+import { tokens } from "@/theme"
+import { Container, Typography, useTheme } from "@mui/material"
 import { useEffect, useState } from "react"
 
-const LiveAgentTestPage = () => {
-    const conversationId = process.env.NEXT_PUBLIC_CONVERSATION_ID || "NO CONV.ID"
+const ReplyPage = () => {
+    const conversationId = process.env.NEXT_PUBLIC_CONVERSATION_ID || ""
+
+    const theme = useTheme()
+    const colors = tokens(theme.palette.mode)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
     const { handleLogin, checkToken } = useAuth()
     useEffect(() => {
         const initializeAuth = async () => {
@@ -18,6 +23,9 @@ const LiveAgentTestPage = () => {
                 if (!isTokenValid) {
                     await handleLogin()
                 }
+                setError(null)
+            } catch (error: unknown) {
+                setError(`Ошибка: ${error instanceof Error ? error.message : "Неизвестная ошибка"}`)
             } finally {
                 setLoading(false)
             }
@@ -27,17 +35,15 @@ const LiveAgentTestPage = () => {
 
     if (loading) return <Loader isOverlay={true} />
 
-    const handleMessageSent = () => {
-        // Здесь можно вызвать refetch для обновления истории чата
-        // Например, если у вас есть доступ к refetch из useGetConversationChatHistoryQuery
-    }
-
+    if (error) return <Typography color={colors.redAccent[500]}>{error}</Typography>
     return (
-        <Container maxWidth="sm">
-            <AdminMessageSender conversationId={conversationId} onMessageSent={handleMessageSent} />
-            <ConversationHistory conversationId={conversationId} />
-        </Container>
+        <ChatProvider conversationId={conversationId}>
+            <Container maxWidth="md">
+                <AdminReply />
+                <ChatConversationHistory />
+            </Container>
+        </ChatProvider>
     )
 }
 
-export default LiveAgentTestPage
+export default ReplyPage

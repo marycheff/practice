@@ -1,4 +1,4 @@
-import Loader from "@/components/loader/Loader"
+import Loader from "@/components/UI/loader/Loader"
 import { useGetChatHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
 import { formatChatHistory } from "@/utils/format-chat-history"
@@ -16,7 +16,6 @@ const BotHistory = () => {
         refetch()
     }
 
-    // Вызов функции обновления при первой загрузке страницы
     useEffect(() => {
         updateChatHistory()
     }, [])

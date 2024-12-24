@@ -1,33 +1,28 @@
 "use client"
-import { useLiveAgentReplyMutation } from "@/lib/api"
+import { useChatContext } from "@/contexts/ChatContext"
 import { tokens } from "@/theme"
 import { Box, Button, TextField, useTheme } from "@mui/material"
 import React, { useState } from "react"
 
-interface LiveAgentMessageSenderProps {
-    conversationId: string // Пропс для передачи conversationId
-    onMessageSent: () => void // Функция для обновления истории чата
-}
-
-const AdminMessageSender: React.FC<LiveAgentMessageSenderProps> = ({ conversationId, onMessageSent }) => {
+const AdminReply: React.FC = () => {
     const [reply, setReply] = useState("")
-    const [sendLiveAgentReply, { isLoading }] = useLiveAgentReplyMutation()
+    const [isLoading, setIsLoading] = useState(false)
+    const { sendMessage } = useChatContext()
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!reply.trim()) return
+        if (!reply.trim() || isLoading) return
 
+        setIsLoading(true)
         try {
-            await sendLiveAgentReply({
-                reply,
-                conversation_id: conversationId,
-            }).unwrap()
-            setReply("") // Очистка поля ввода после успешной отправки
-            onMessageSent() // Вызов функции для обновления истории чата
+            await sendMessage(reply)
+            setReply("") 
         } catch (err) {
             console.error("Failed to send live agent reply:", err)
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -44,10 +39,10 @@ const AdminMessageSender: React.FC<LiveAgentMessageSenderProps> = ({ conversatio
                     sx={{
                         "& .MuiOutlinedInput-root": {
                             "& fieldset": {
-                                borderColor: colors.primary[300], // Цвет рамки
+                                borderColor: colors.primary[300],
                             },
                             "&.Mui-focused fieldset": {
-                                borderColor: colors.primary[100], // Цвет рамки при фокусе
+                                borderColor: colors.primary[100],
                             },
                         },
                     }}
@@ -69,4 +64,4 @@ const AdminMessageSender: React.FC<LiveAgentMessageSenderProps> = ({ conversatio
     )
 }
 
-export default AdminMessageSender
+export default AdminReply

@@ -1,6 +1,6 @@
 "use client"
 
-import Loader from "@/components/loader/Loader"
+import Loader from "@/components/UI/loader/Loader"
 import { useAuth } from "@/hooks/useAuth"
 import { tokens } from "@/theme"
 import { Box, Container, Typography, useTheme } from "@mui/material"

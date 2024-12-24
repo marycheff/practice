@@ -3,7 +3,7 @@ import BotHistory from "@/components/BotHistory"
 import { Container, Typography, useTheme } from "@mui/material"
 import { useEffect, useState } from "react"
 
-import Loader from "@/components/loader/Loader"
+import Loader from "@/components/UI/loader/Loader"
 import { useAuth } from "@/hooks/useAuth"
 import { tokens } from "@/theme"
 
