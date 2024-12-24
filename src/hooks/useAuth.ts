@@ -13,7 +13,6 @@ export const useAuth = () => {
     // Логин с сохранением токена
     const handleLogin = useCallback(async () => {
         try {
-            console.log("Вход")
             const email = process.env.NEXT_PUBLIC_API_EMAIL
             const password = process.env.NEXT_PUBLIC_API_PASSWORD
 

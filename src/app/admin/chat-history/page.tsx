@@ -1,5 +1,5 @@
 "use client"
-import ChatHistory from "@/components/ChatHistory"
+import BotHistory from "@/components/BotHistory"
 import { Container, Typography, useTheme } from "@mui/material"
 import { useEffect, useState } from "react"
 
@@ -36,7 +36,7 @@ const ChatHistoryPage = () => {
 
     return (
         <Container maxWidth="md">
-            <ChatHistory />
+            <BotHistory />
         </Container>
     )
 }

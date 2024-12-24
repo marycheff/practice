@@ -1,17 +1,13 @@
 import Loader from "@/components/loader/Loader"
-import { useGetConversationChatHistoryQuery } from "@/lib/api" // Импортируйте новый хук
+import { useGetChatHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
-import { formatChatHistory } from "@/utils/format-conversation-history"
+import { formatChatHistory } from "@/utils/format-chat-history"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import { useEffect } from "react"
 
-interface ChatConversationHistoryProps {
-    conversationId: string
-}
-
-const ChatConversationHistory: React.FC<ChatConversationHistoryProps> = ({ conversationId }) => {
-    const { data: chatHistoryData, isFetching, error, refetch } = useGetConversationChatHistoryQuery(conversationId)
+const BotHistory = () => {
+    const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
 
@@ -20,6 +16,7 @@ const ChatConversationHistory: React.FC<ChatConversationHistoryProps> = ({ conve
         refetch()
     }
 
+    // Вызов функции обновления при первой загрузке страницы
     useEffect(() => {
         updateChatHistory()
     }, [])
@@ -101,4 +98,4 @@ const ChatConversationHistory: React.FC<ChatConversationHistoryProps> = ({ conve
     )
 }
 
-export default ChatConversationHistory
+export default BotHistory

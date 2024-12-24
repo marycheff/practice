@@ -1,6 +1,6 @@
 "use client"
 import AdminMessageSender from "@/components/AdminMesaageSender"
-import ChatConversationHistory from "@/components/ChatConversationHistory"
+import ConversationHistory from "@/components/ConversationHistory"
 
 import Loader from "@/components/loader/Loader"
 import { useAuth } from "@/hooks/useAuth"
@@ -35,7 +35,7 @@ const LiveAgentTestPage = () => {
     return (
         <Container maxWidth="sm">
             <AdminMessageSender conversationId={conversationId} onMessageSent={handleMessageSent} />
-            <ChatConversationHistory conversationId={conversationId} />
+            <ConversationHistory conversationId={conversationId} />
         </Container>
     )
 }

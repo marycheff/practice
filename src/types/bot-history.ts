@@ -1,5 +1,3 @@
-// src/types/chat-history-response.ts
-
 export interface UserIdentification {
     id: string
     contact_name: string
@@ -8,37 +6,18 @@ export interface UserIdentification {
     phone_no: string
 }
 
-export interface ChatData {
-    qa_id: string
+export interface Message {
     question: string
     answer: string
     like_status: string
     origin: string
     is_read: boolean
     is_priority: boolean
-    chat_via: string
     created_at: string
     user_identification: UserIdentification
 }
 
-export interface BotInfo {
-    icon: string
-    name: string
-    description: string
-    user_name: string
-    created_at: string
-}
-
-export interface ConversationInfo {
-    id: string
-    is_read: boolean
-    is_priority: boolean
-    is_bookmarked: boolean
-    chat_via: string
-    reply_by: string
-}
-
-export interface ChatHistoryConversationResponse {
+export interface ChatHistoryResponse {
     status: string
     links: {
         next: string | null
@@ -48,7 +27,15 @@ export interface ChatHistoryConversationResponse {
     page: number
     total_pages: number
     total: number
-    bot: BotInfo
-    conversation: ConversationInfo
-    data: ChatData[]
+    bot_id: string
+    data: Message[]
+}
+
+export interface FormattedChatHistory {
+    total: number
+    messages: {
+        question: string
+        answer: string
+        created_at: string
+    }[]
 }

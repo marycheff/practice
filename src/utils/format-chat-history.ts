@@ -1,4 +1,4 @@
-import { ChatHistoryResponse, FormattedChatHistory } from "../types/chat-history"
+import { ChatHistoryResponse, FormattedChatHistory } from "../types/bot-history"
 
 // Сортировка сообщений по дате
 export function formatChatHistory(response: ChatHistoryResponse): FormattedChatHistory {
