@@ -5,6 +5,7 @@ interface DecodedToken {
 }
 export const isTokenExpired = (token: string): boolean => {
     try {
+        if (!token) return true
         const decoded = jwtDecode<DecodedToken>(token)
         const currentTime = Math.floor(Date.now() / 1000)
         return decoded.exp < currentTime

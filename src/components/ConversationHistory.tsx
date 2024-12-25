@@ -7,9 +7,12 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import React from "react"
 
 const ChatConversationHistory: React.FC = () => {
-    const { chatHistory, isLoading, error, refreshChatHistory } = useChatContext()
+    // Настройка темы
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
+
+    // Получение истории чата
+    const { chatHistory, isLoading, error, refreshChatHistory } = useChatContext()
 
     if (error) return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
     const formattedChatHistory = chatHistory ? formatChatHistory(chatHistory) : null
@@ -77,6 +80,7 @@ const ChatConversationHistory: React.FC = () => {
                             )}
                             <Typography variant="caption" color={colors.grey[600]} ml={0.3}>
                                 {message.created_at}
+                                {message}
                             </Typography>
                         </Box>
                     ))}

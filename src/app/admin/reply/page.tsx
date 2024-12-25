@@ -1,14 +1,19 @@
 "use client"
-import ChatConversationHistory from "@/components/ConversationHistory"
 import AdminReply from "@/components/AdminReply"
+import ChatConversationHistory from "@/components/ConversationHistory"
 import Loader from "@/components/UI/loader/Loader"
 import { ChatProvider } from "@/contexts/ChatContext"
 import { useTokenVerification } from "@/hooks/useTokenVerification"
+import { tokens } from "@/theme"
 
-import { Container } from "@mui/material"
+import { Box, Container, Typography, useTheme } from "@mui/material"
 import { useEffect } from "react"
 
 const ReplyPage = () => {
+    // Настройка темы
+    const theme = useTheme()
+    const colors = tokens(theme.palette.mode)
+
     // Проверка токена
     const { verifyToken, loading } = useTokenVerification()
     useEffect(() => {
@@ -20,8 +25,13 @@ const ReplyPage = () => {
     return (
         <ChatProvider conversationId={conversationId}>
             <Container maxWidth="md">
-                <AdminReply />
-                <ChatConversationHistory />
+                <Typography variant="h4" sx={{ color: colors.grey[100], textAlign: "center" }}>
+                    Ответ админа
+                </Typography>
+                <Box mt={2}>
+                    <AdminReply />
+                    <ChatConversationHistory />
+                </Box>
             </Container>
         </ChatProvider>
     )

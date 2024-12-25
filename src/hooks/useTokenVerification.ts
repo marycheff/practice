@@ -11,18 +11,25 @@ export const useTokenVerification = () => {
     const verifyToken = useCallback(async () => {
         setLoading(true)
         setError(null)
-        const token = getCookie("token") as string
-        if (!token || isTokenExpired(token)) {
-            const loginSuccess = await handleLogin()
-            if (!loginSuccess) {
-                setError("Failed to authenticate. Please try again.")
+        try {
+            const token = getCookie("token") as string
+            if (!token || isTokenExpired(token)) {
+                const loginSuccess = await handleLogin()
+                if (!loginSuccess) {
+                    setError("Ошибка входа.")
+                    return false
+                }
             }
+            return true
+        } catch (err) {
+            setError("Неизвестная ошибка:\n" + err)
+            return false
+        } finally {
+            setLoading(false)
         }
-        setLoading(false)
     }, [handleLogin])
 
     const verifyTokenAndRefetch = useCallback(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async (refetchFunction: () => Promise<any>) => {
             await verifyToken()
             if (!error) {

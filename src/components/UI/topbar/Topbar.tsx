@@ -7,8 +7,10 @@ import { useContext } from "react"
 import { ColorModeContext } from "../../../theme"
 
 const Topbar = () => {
+    // Настройка темы
     const theme = useTheme()
     const colorMode = useContext(ColorModeContext)
+    
     return (
         <Box display="flex" justifyContent="flex-end" mt={1} mr={1}>
             <IconButton onClick={colorMode?.toggleColorMode}>

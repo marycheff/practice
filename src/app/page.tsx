@@ -6,6 +6,7 @@ import { Box, Button, Container, Typography, useTheme } from "@mui/material"
 import Link from "next/link"
 
 const Home = () => {
+    // Настройка темы
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
     return (

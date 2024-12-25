@@ -14,8 +14,10 @@ import { Menu, MenuItem, ProSidebar } from "react-pro-sidebar"
 import "react-pro-sidebar/dist/css/styles.css"
 
 const Item = ({ title, to, icon, selected, setSelected }: ItemProps) => {
+    // Настройка темы
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
+    
     const isActive = selected === title
 
     return (

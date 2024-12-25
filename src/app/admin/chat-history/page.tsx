@@ -1,12 +1,16 @@
 "use client"
 import BotHistory from "@/components/BotHistory"
-import { Box, Container } from "@mui/material"
-import { useEffect } from "react"
-
 import Loader from "@/components/UI/loader/Loader"
 import { useTokenVerification } from "@/hooks/useTokenVerification"
+import { tokens } from "@/theme"
+import { Box, Container, Typography, useTheme } from "@mui/material"
+import { useEffect } from "react"
 
 const ChatHistoryPage = () => {
+    // Настройка темы
+    const theme = useTheme()
+    const colors = tokens(theme.palette.mode)
+
     // Проверка токена
     const { verifyToken, loading } = useTokenVerification()
     useEffect(() => {
@@ -16,7 +20,10 @@ const ChatHistoryPage = () => {
 
     return (
         <Container maxWidth="md">
-            <Box mt={4}>
+            <Typography variant="h4" sx={{ color: colors.grey[100], textAlign: "center" }}>
+                История сообщений с ботом
+            </Typography>
+            <Box mt={2}>
                 <BotHistory />
             </Box>
         </Container>

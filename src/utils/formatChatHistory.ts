@@ -7,5 +7,6 @@ export function formatChatHistory(response: ChatHistoryResponse): FormattedChatH
         messages: [...response.data].sort(
             (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         ),
+        // chatVia:response.status.
     }
 }

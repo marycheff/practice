@@ -3,6 +3,7 @@ import { Message } from "@/types/botHistory"
 export interface ConversationMessage extends Message {
     qa_id: string
     question: string
+    chat_via: string
 }
 
 export interface BotInfo {

@@ -4,6 +4,7 @@ import { ChatHistoryResponse } from "@/types/botHistory"
 import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 
+// Создаем базовый запрос с использованием fetchBaseQuery
 const baseQuery = fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
     prepareHeaders: headers => {
@@ -15,13 +16,15 @@ const baseQuery = fetchBaseQuery({
     },
 })
 
-const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+// Создаем базовый запрос с повторной аутентификацией
+const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
     args,
     api,
     extraOptions
 ) => {
-    let result = await baseQuery(args, api, extraOptions)
+    let result = await baseQuery(args, api, extraOptions) // Выполняем базовый запрос
     if (result.error && (result.error as FetchBaseQueryError).status === 401) {
+        // Проверка на 401
         deleteCookie("token")
         const refreshResult = await baseQuery(
             {
@@ -36,16 +39,19 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
             extraOptions
         )
         if (refreshResult.data) {
-            setCookie("token", (refreshResult.data as LoginResponse).data.token)
-            result = await baseQuery(args, api, extraOptions)
+            // Если повторная аутентификация успешна
+            setCookie("token", (refreshResult.data as LoginResponse).data.token) // Устанавливаем токен в куки
+            result = await baseQuery(args, api, extraOptions) // Повторяем исходный запрос
         }
     }
     return result
 }
 
+// Создание API
 export const api = createApi({
-    baseQuery: baseQueryWithReauth,
+    baseQuery: baseQueryWithReAuth, // Устанавливаем базовый запрос с повторной аутентификацией
     endpoints: builder => ({
+        // Определяем эндпоинт для входа
         login: builder.mutation<LoginResponse, LoginRequest>({
             query: credentials => ({
                 url: "/login",
@@ -53,17 +59,20 @@ export const api = createApi({
                 body: credentials,
             }),
         }),
+        // Определяем эндпоинт для получения истории чата
         getChatHistory: builder.query<ChatHistoryResponse, void>({
-            query: () => `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}/`,
+            query: () => `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}/`, 
         }),
+        // Определяем эндпоинт для получения истории чата по conversationId
         getConversationChatHistory: builder.query<ChatHistoryResponse, string>({
-            query: conversationId => `/conversation/chat-history/${conversationId}/`,
+            query: conversationId => `/conversation/chat-history/${conversationId}/`, 
         }),
+        // Определяем эндпоинт для ответа админа
         liveAgentReply: builder.mutation<AdminReplyResponse, AdminReplyRequest>({
             query: replyData => ({
-                url: "/bot/reply_with_live_agent/",
-                method: "POST",
-                body: replyData,
+                url: "/bot/reply_with_live_agent/", 
+                method: "POST", 
+                body: replyData, 
             }),
         }),
     }),

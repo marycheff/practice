@@ -17,7 +17,7 @@ const ChatBot = () => {
             document.body.appendChild(script)
         }
 
-        // Проверяем, загружен ли скрипт
+        // Проверка, загружен ли скрипт
         if (!document.getElementById(scriptId)) {
             loadScript()
         }

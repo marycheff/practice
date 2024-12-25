@@ -5,22 +5,24 @@ import { Box, Button, TextField, useTheme } from "@mui/material"
 import React, { useState } from "react"
 
 const AdminReply: React.FC = () => {
-    const [reply, setReply] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
-    const { sendMessage } = useChatContext()
+    // Настройка темы
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
 
+    const [reply, setReply] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const { sendMessage } = useChatContext()
+
+    // Обработка нажатия на кнопку отправки
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!reply.trim() || isLoading) return
-
         setIsLoading(true)
         try {
             await sendMessage(reply)
-            setReply("") 
+            setReply("")
         } catch (err) {
-            console.error("Failed to send live agent reply:", err)
+            console.error("Ошибка отправки сообщения админом:", err)
         } finally {
             setIsLoading(false)
         }
