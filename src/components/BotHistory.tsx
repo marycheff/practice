@@ -1,4 +1,5 @@
 import Loader from "@/components/UI/loader/Loader"
+import { useTokenVerification } from "@/hooks/useTokenVerification"
 import { useGetChatHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
 import { formatChatHistory } from "@/utils/format-chat-history"
@@ -10,9 +11,10 @@ const BotHistory = () => {
     const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
+    const { verifyToken, loading } = useTokenVerification()
 
-    // Функция для обновления данных
-    const updateChatHistory = () => {
+    const updateChatHistory = async () => {
+        await verifyToken()
         refetch()
     }
 
@@ -20,12 +22,15 @@ const BotHistory = () => {
         updateChatHistory()
     }, [])
 
-    if (error) return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
+    if (loading || isFetching) return <Loader isOverlay={true} />
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (error) return <div>Error: {(error as any).message}</div>
 
     // Сортировка сообщений по дате
     const formattedChatHistory = chatHistoryData ? formatChatHistory(chatHistoryData) : null
 
-    if (isFetching) return <Loader isOverlay={true} />
+    if (isFetching || loading) return <Loader isOverlay={true} />
 
     return (
         <>

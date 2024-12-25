@@ -1,39 +1,21 @@
 "use client"
-
 import Loader from "@/components/UI/loader/Loader"
-import { useAuth } from "@/hooks/useAuth"
+import { useTokenVerification } from "@/hooks/useTokenVerification"
 import { tokens } from "@/theme"
 import { Box, Container, Typography, useTheme } from "@mui/material"
 import { getCookie } from "cookies-next"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 const AdminPage = () => {
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
-    const token = getCookie("token") as string
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-    const { handleLogin, checkToken } = useAuth()
+    const { verifyToken, loading } = useTokenVerification()
+
     useEffect(() => {
-        const initializeAuth = async () => {
-            try {
-                const isTokenValid = await checkToken()
-                if (!isTokenValid) {
-                    console.log("Токен не валиден")
-                    await handleLogin()
-                }
-                setError(null)
-            } catch (error: unknown) {
-                setError(`Ошибка: ${error instanceof Error ? error.message : "Неизвестная ошибка"}`)
-            } finally {
-                setLoading(false)
-            }
-        }
-        initializeAuth()
-    }, [handleLogin, checkToken])
+        verifyToken()
+    }, [verifyToken])
 
     if (loading) return <Loader isOverlay={true} />
-    if (error) return <Typography color={colors.redAccent[500]}>{error}</Typography>
 
     return (
         <Container maxWidth="md">
@@ -55,7 +37,7 @@ const AdminPage = () => {
                         wordBreak: "break-all",
                         color: colors.greenAccent[400],
                     }}>
-                    {token}
+                    {getCookie("token")}
                 </Typography>
             </Box>
         </Container>

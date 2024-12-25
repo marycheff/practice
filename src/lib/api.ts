@@ -1,28 +1,62 @@
 import { LiveAgentReplyRequest, LiveAgentReplyResponse } from "@/types/admin-reply"
 import { LoginRequest, LoginResponse } from "@/types/auth"
-import { ChatHistoryResponse } from "@/types/bot-history" // Импортируйте существующий тип
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { deleteCookie, getCookie } from "cookies-next"
-if (!process.env.NEXT_PUBLIC_API_EMAIL || !process.env.NEXT_PUBLIC_API_PASSWORD) {
-    throw new Error("Email или password не найдены в .env")
-}
-if (!process.env.NEXT_PUBLIC_BOT_ID) {
-    throw new Error("Переменная NEXT_PUBLIC_BOT_ID не найдена в .env файле")
+import { ChatHistoryResponse } from "@/types/bot-history"
+import { createApi, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
+import { deleteCookie, getCookie, setCookie } from "cookies-next"
+
+const baseQuery = fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    prepareHeaders: headers => {
+        const token = getCookie("token")
+        if (token) {
+            headers.set("authorization", `Bearer ${token}`)
+        }
+        return headers
+    },
+})
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
+    try {
+        let result = await baseQuery(args, api, extraOptions)
+        if (result.error && (result.error as FetchBaseQueryError).status === 401) {
+            deleteCookie("token")
+            const refreshResult = await baseQuery(
+                {
+                    url: "/login",
+                    method: "POST",
+                    body: {
+                        email: process.env.NEXT_PUBLIC_API_EMAIL,
+                        password: process.env.NEXT_PUBLIC_API_PASSWORD,
+                    },
+                },
+                api,
+                extraOptions
+            )
+            if (refreshResult.data) {
+                //api.dispatch(setCredentials({ ...(refreshResult.data as LoginResponse).data }))
+                result = await baseQuery(args, api, extraOptions)
+                setCookie("token", (refreshResult.data as LoginResponse).data.token)
+                console.log("123")
+            } else {
+                //api.dispatch(logout())
+            }
+        }
+        return result
+    } catch (error) {
+        console.error("API request error:", error)
+        return {
+            error: {
+                status: "FETCH_ERROR",
+                error: error instanceof Error ? error.message : "Ошибка сети при выполнении запроса",
+            },
+        }
+    }
 }
 
 export const api = createApi({
-    baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_API_URL,
-        prepareHeaders: headers => {
-            const token = getCookie("token")
-            if (token) {
-                headers.set("authorization", `Bearer ${token}`)
-            }
-            return headers
-        },
-    }),
+    baseQuery: baseQueryWithReauth,
     endpoints: builder => ({
-        // Авторизация
         login: builder.mutation<LoginResponse, LoginRequest>({
             query: credentials => ({
                 url: "/login",
@@ -30,41 +64,12 @@ export const api = createApi({
                 body: credentials,
             }),
         }),
-        // Получение истории чата
         getChatHistory: builder.query<ChatHistoryResponse, void>({
-            query: () => ({
-                url: `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}`,
-                method: "GET",
-            }),
+            query: () => `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}/`,
         }),
-        // Получение истории чата по conversation_Id
         getConversationChatHistory: builder.query<ChatHistoryResponse, string>({
-            query: conversationId => ({
-                url: `${process.env.NEXT_PUBLIC_API_URL}/conversation/chat-history/${conversationId}`,
-                method: "GET",
-            }),
+            query: conversationId => `/conversation/chat-history/${conversationId}/`,
         }),
-        // Проверка токена на рандомном запросе
-        checkToken: builder.query<boolean, void>({
-            queryFn: async (_, _queryApi, _extraOptions, fetchBaseQuery) => {
-                try {
-                    const response = await fetchBaseQuery({
-                        url: "/user/get_all_user_bots/",
-                        method: "GET",
-                    })
-                    if (response.error) {
-                        deleteCookie("token")
-                        return { data: false }
-                    }
-                    const result = (await response.data) as { status: string }
-                    return { data: result.status === "success" }
-                } catch (error) {
-                    console.error("Ошибка при запросе проверки токена:", error)
-                    return { data: false }
-                }
-            },
-        }),
-        // Ответ живого агента
         liveAgentReply: builder.mutation<LiveAgentReplyResponse, LiveAgentReplyRequest>({
             query: replyData => ({
                 url: "/bot/reply_with_live_agent/",
@@ -79,6 +84,5 @@ export const {
     useLoginMutation,
     useGetChatHistoryQuery,
     useGetConversationChatHistoryQuery,
-    useLazyCheckTokenQuery,
     useLiveAgentReplyMutation,
 } = api

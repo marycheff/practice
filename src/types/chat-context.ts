@@ -8,5 +8,6 @@ export interface ChatContextType {
     isLoading: boolean
     error: FetchBaseQueryError | SerializedError | undefined
     sendMessage: (reply: string) => Promise<void>
-    refreshChatHistory: () => void
+    refreshChatHistory: () => Promise<void>
 }
+
