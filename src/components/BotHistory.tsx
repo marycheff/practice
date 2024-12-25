@@ -15,8 +15,6 @@ const BotHistory = () => {
     // Получение истории чата
     const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
 
-    
-
     // Проверка токена
     const { verifyToken, loading } = useTokenVerification()
     const updateChatHistory = async () => {
@@ -25,7 +23,7 @@ const BotHistory = () => {
     }
 
     if (error) return <div>Error: {error as ReactNode}.</div>
-    
+
     // Сортировка сообщений по дате
     const formattedChatHistory = chatHistoryData ? formatChatHistory(chatHistoryData) : null
     return (
@@ -82,7 +80,7 @@ const BotHistory = () => {
                                             maxWidth: "70%",
                                         }}>
                                         {message.answer.trim() === "I don't know." ? (
-                                            <Typography>[нет ответа от бота]</Typography>
+                                            <Typography>[бот не знает ответ]</Typography>
                                         ) : (
                                             <Typography>{message.answer}</Typography>
                                         )}

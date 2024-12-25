@@ -2,6 +2,7 @@ import { AdminReplyRequest, AdminReplyResponse } from "@/types/adminReply"
 import { LoginRequest, LoginResponse } from "@/types/auth"
 import { ChatHistoryResponse } from "@/types/botHistory"
 import { ConversationHistoryResponse } from "@/types/conversationHistory"
+import { RecentChatHistoryResponse } from "@/types/recentChatHistory"
 import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 
@@ -76,6 +77,9 @@ export const api = createApi({
                 body: replyData,
             }),
         }),
+        getRecentChatHistory: builder.query<RecentChatHistoryResponse, void>({
+            query: () => `bot/chat-history/recent/`,
+        }),
     }),
 })
 
@@ -84,4 +88,5 @@ export const {
     useGetChatHistoryQuery,
     useGetConversationChatHistoryQuery,
     useLiveAgentReplyMutation,
+    useGetRecentChatHistoryQuery,
 } = api

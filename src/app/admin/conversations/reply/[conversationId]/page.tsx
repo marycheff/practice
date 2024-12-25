@@ -1,5 +1,5 @@
 "use client"
-import AdminReply from "@/components/AdminReply"
+
 import ChatConversationHistory from "@/components/ConversationHistory"
 import Loader from "@/components/UI/loader/Loader"
 import { ChatProvider } from "@/contexts/ChatContext"
@@ -7,29 +7,31 @@ import { useTokenVerification } from "@/hooks/useTokenVerification"
 import { tokens } from "@/theme"
 
 import { Box, Container, Typography, useTheme } from "@mui/material"
+import { useParams } from "next/navigation" // Используем useParams для работы с параметрами пути
 import { useEffect } from "react"
 
 const ReplyPage = () => {
-    // Настройка темы
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
-
-    // Проверка токена
     const { verifyToken, loading } = useTokenVerification()
+    const { conversationId } = useParams()
+
     useEffect(() => {
         verifyToken()
     }, [verifyToken])
-    if (loading) return <Loader isOverlay={true} />
 
-    const conversationId = process.env.NEXT_PUBLIC_CONVERSATION_ID || ""
+    if (loading || !conversationId) return <Loader isOverlay={true} />
+    // Приводим conversationId к строке
+    const conversationIdString = Array.isArray(conversationId) ? conversationId[0] : conversationId
+
     return (
-        <ChatProvider conversationId={conversationId}>
+        <ChatProvider conversationId={conversationIdString}>
             <Container maxWidth="md">
-                <Typography variant="h4" sx={{ color: colors.grey[100], textAlign: "center" }}>
-                    Ответ админа
+                <Typography variant="h5" sx={{ color: colors.grey[100], textAlign: "center" }}>
+                    Беседа {conversationIdString}
                 </Typography>
+
                 <Box mt={2}>
-                    <AdminReply />
                     <ChatConversationHistory />
                 </Box>
             </Container>

@@ -106,8 +106,8 @@ const Sidebar = () => {
                             setSelected={setSelected}
                         />
                         <Item
-                            title="Ответить"
-                            to="/admin/reply"
+                            title="История бесед"
+                            to="/admin/conversations"
                             icon={<ReplyIcon />}
                             selected={selected}
                             setSelected={setSelected}

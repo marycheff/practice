@@ -14,7 +14,12 @@ const ChatConversationHistory: React.FC = () => {
     // Получение истории чата
     const { chatHistory, isLoading, error, refreshChatHistory } = useChatContext()
 
-    if (error) return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
+    if (error) {
+        if ("originalStatus" in error && error.originalStatus === 404) {
+            return <p>Неверный ConversationID</p>
+        }
+        return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
+    }
     const formattedChatHistory = chatHistory ? formatConversationHistory(chatHistory) : null
 
     return (
