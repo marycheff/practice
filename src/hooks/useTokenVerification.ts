@@ -30,6 +30,7 @@ export const useTokenVerification = () => {
     }, [handleLogin])
 
     const verifyTokenAndRefetch = useCallback(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async (refetchFunction: () => Promise<any>) => {
             await verifyToken()
             if (!error) {
