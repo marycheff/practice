@@ -1,8 +1,6 @@
 import { ruRU as coreRuRU } from "@mui/material/locale"
 import { createTheme, PaletteMode } from "@mui/material/styles"
 import { createContext } from "react"
-
-// Color design tokens
 export const tokens = (mode: string) => ({
     ...(mode === "dark"
         ? {

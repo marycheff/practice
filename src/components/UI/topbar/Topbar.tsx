@@ -4,7 +4,7 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined"
 import { Box, IconButton } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import { useContext } from "react"
-import { ColorModeContext } from "../../theme"
+import { ColorModeContext } from "../../../theme"
 
 const Topbar = () => {
     const theme = useTheme()

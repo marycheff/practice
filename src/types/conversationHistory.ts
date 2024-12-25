@@ -1,4 +1,4 @@
-import { Message } from "@/types/bot-history"
+import { Message } from "@/types/botHistory"
 
 export interface ConversationMessage extends Message {
     qa_id: string

@@ -2,35 +2,29 @@ import Loader from "@/components/UI/loader/Loader"
 import { useTokenVerification } from "@/hooks/useTokenVerification"
 import { useGetChatHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
-import { formatChatHistory } from "@/utils/format-chat-history"
+import { formatChatHistory } from "@/utils/formatChatHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
-import { useEffect } from "react"
+import { ReactNode } from "react"
 
 const BotHistory = () => {
     const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
-    const { verifyToken, loading } = useTokenVerification()
 
+    // Проверка токена
+    const { verifyToken, loading } = useTokenVerification()
     const updateChatHistory = async () => {
+        console.log("Прооверка токена")
         await verifyToken()
         refetch()
     }
 
-    useEffect(() => {
-        updateChatHistory()
-    }, [])
-
     if (loading || isFetching) return <Loader isOverlay={true} />
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (error) return <div>Error: {(error as any).message}</div>
+    if (error) return <div>Error: {error as ReactNode}.</div>
 
     // Сортировка сообщений по дате
     const formattedChatHistory = chatHistoryData ? formatChatHistory(chatHistoryData) : null
-
-    if (isFetching || loading) return <Loader isOverlay={true} />
 
     return (
         <>

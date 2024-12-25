@@ -1,7 +1,7 @@
-import { LiveAgentReplyRequest, LiveAgentReplyResponse } from "@/types/admin-reply"
+import { AdminReplyRequest, AdminReplyResponse } from "@/types/adminReply"
 import { LoginRequest, LoginResponse } from "@/types/auth"
-import { ChatHistoryResponse } from "@/types/bot-history"
-import { createApi, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
+import { ChatHistoryResponse } from "@/types/botHistory"
+import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 
 const baseQuery = fetchBaseQuery({
@@ -15,43 +15,32 @@ const baseQuery = fetchBaseQuery({
     },
 })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
-    try {
-        let result = await baseQuery(args, api, extraOptions)
-        if (result.error && (result.error as FetchBaseQueryError).status === 401) {
-            deleteCookie("token")
-            const refreshResult = await baseQuery(
-                {
-                    url: "/login",
-                    method: "POST",
-                    body: {
-                        email: process.env.NEXT_PUBLIC_API_EMAIL,
-                        password: process.env.NEXT_PUBLIC_API_PASSWORD,
-                    },
+const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+    args,
+    api,
+    extraOptions
+) => {
+    let result = await baseQuery(args, api, extraOptions)
+    if (result.error && (result.error as FetchBaseQueryError).status === 401) {
+        deleteCookie("token")
+        const refreshResult = await baseQuery(
+            {
+                url: "/login",
+                method: "POST",
+                body: {
+                    email: process.env.NEXT_PUBLIC_API_EMAIL,
+                    password: process.env.NEXT_PUBLIC_API_PASSWORD,
                 },
-                api,
-                extraOptions
-            )
-            if (refreshResult.data) {
-                //api.dispatch(setCredentials({ ...(refreshResult.data as LoginResponse).data }))
-                result = await baseQuery(args, api, extraOptions)
-                setCookie("token", (refreshResult.data as LoginResponse).data.token)
-                console.log("123")
-            } else {
-                //api.dispatch(logout())
-            }
-        }
-        return result
-    } catch (error) {
-        console.error("API request error:", error)
-        return {
-            error: {
-                status: "FETCH_ERROR",
-                error: error instanceof Error ? error.message : "Ошибка сети при выполнении запроса",
             },
+            api,
+            extraOptions
+        )
+        if (refreshResult.data) {
+            setCookie("token", (refreshResult.data as LoginResponse).data.token)
+            result = await baseQuery(args, api, extraOptions)
         }
     }
+    return result
 }
 
 export const api = createApi({
@@ -70,7 +59,7 @@ export const api = createApi({
         getConversationChatHistory: builder.query<ChatHistoryResponse, string>({
             query: conversationId => `/conversation/chat-history/${conversationId}/`,
         }),
-        liveAgentReply: builder.mutation<LiveAgentReplyResponse, LiveAgentReplyRequest>({
+        liveAgentReply: builder.mutation<AdminReplyResponse, AdminReplyRequest>({
             query: replyData => ({
                 url: "/bot/reply_with_live_agent/",
                 method: "POST",

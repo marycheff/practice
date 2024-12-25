@@ -1,4 +1,4 @@
-import { ChatHistoryResponse } from "@/types/bot-history"
+import { ChatHistoryResponse } from "@/types/botHistory"
 import { SerializedError } from "@reduxjs/toolkit"
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 
@@ -10,4 +10,3 @@ export interface ChatContextType {
     sendMessage: (reply: string) => Promise<void>
     refreshChatHistory: () => Promise<void>
 }
-

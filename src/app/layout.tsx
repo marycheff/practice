@@ -9,7 +9,7 @@ const geistSans = Geist({
 })
 
 export const metadata: Metadata = {
-    title: "Производственная практика",
+    title: "ПП",
     description: "Производственная практика",
 }
 

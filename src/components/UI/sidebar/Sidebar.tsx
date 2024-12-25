@@ -1,5 +1,6 @@
 "use client"
 
+import { ItemProps } from "@/components/UI/sidebar/Sidebar.props"
 import { tokens } from "@/theme"
 import HistoryIcon from "@mui/icons-material/History"
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined"
@@ -12,11 +13,10 @@ import { useState } from "react"
 import { Menu, MenuItem, ProSidebar } from "react-pro-sidebar"
 import "react-pro-sidebar/dist/css/styles.css"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Item = ({ title, to, icon, selected, setSelected }: any) => {
+const Item = ({ title, to, icon, selected, setSelected }: ItemProps) => {
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
-    const isActive = selected === title // Проверяем, активен ли элемент
+    const isActive = selected === title
 
     return (
         <MenuItem

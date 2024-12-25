@@ -1,6 +1,6 @@
 import { useTokenVerification } from "@/hooks/useTokenVerification"
 import { useGetConversationChatHistoryQuery, useLiveAgentReplyMutation } from "@/lib/api"
-import { ChatContextType } from "@/types/chat-context"
+import { ChatContextType } from "@/types/chatContext"
 import { SerializedError } from "@reduxjs/toolkit"
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from "react"

@@ -25,6 +25,7 @@
     height: 50px;
     animation: spin 1s linear infinite;
 }
+
 .loader-text {
     margin-top: 7px;
     text-align: center;

@@ -1,7 +1,7 @@
 import Loader from "@/components/UI/loader/Loader"
 import { useChatContext } from "@/contexts/ChatContext"
 import { tokens } from "@/theme"
-import { formatChatHistory } from "@/utils/format-chat-history"
+import { formatChatHistory } from "@/utils/formatChatHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import React from "react"
