@@ -1,7 +1,7 @@
 import Loader from "@/components/UI/loader/Loader"
 import { useChatContext } from "@/contexts/ChatContext"
 import { tokens } from "@/theme"
-import { formatChatHistory } from "@/utils/formatChatHistory"
+import { formatConversationHistory } from "@/utils/formatChatHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import React from "react"
@@ -15,7 +15,7 @@ const ChatConversationHistory: React.FC = () => {
     const { chatHistory, isLoading, error, refreshChatHistory } = useChatContext()
 
     if (error) return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
-    const formattedChatHistory = chatHistory ? formatChatHistory(chatHistory) : null
+    const formattedChatHistory = chatHistory ? formatConversationHistory(chatHistory) : null
 
     return (
         <Box
@@ -70,8 +70,9 @@ const ChatConversationHistory: React.FC = () => {
                                             borderRadius: "8px",
                                             maxWidth: "70%",
                                         }}>
-                                        {message.answer.trim() === "I don't know." ? (
-                                            <Typography>[нет ответа от бота]</Typography>
+                                        {message.answer.trim() === "I don't know." ||
+                                        message.answer.trim() === "Sorry! I'm not sure what you're saying." ? (
+                                            <Typography>[бот не знает ответ]</Typography>
                                         ) : (
                                             <Typography>{message.answer}</Typography>
                                         )}
@@ -79,8 +80,12 @@ const ChatConversationHistory: React.FC = () => {
                                 </Box>
                             )}
                             <Typography variant="caption" color={colors.grey[600]} ml={0.3}>
-                                {message.created_at}
-                                {message}
+                                {message.created_at} |{" "}
+                                {message.chat_via === "bot"
+                                    ? "бот"
+                                    : message.chat_via === "live_chat"
+                                    ? "админ"
+                                    : message.chat_via}
                             </Typography>
                         </Box>
                     ))}

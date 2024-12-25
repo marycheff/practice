@@ -37,3 +37,13 @@ export interface ConversationHistoryResponse {
     conversation: ConversationInfo
     data: ConversationMessage[]
 }
+
+export interface FormattedConversationHistory {
+    total: number
+    messages: {
+        question: string
+        answer: string
+        created_at: string
+        chat_via: string
+    }[]
+}

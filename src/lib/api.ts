@@ -1,6 +1,7 @@
 import { AdminReplyRequest, AdminReplyResponse } from "@/types/adminReply"
 import { LoginRequest, LoginResponse } from "@/types/auth"
 import { ChatHistoryResponse } from "@/types/botHistory"
+import { ConversationHistoryResponse } from "@/types/conversationHistory"
 import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 
@@ -61,18 +62,18 @@ export const api = createApi({
         }),
         // Определяем эндпоинт для получения истории чата
         getChatHistory: builder.query<ChatHistoryResponse, void>({
-            query: () => `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}/`, 
+            query: () => `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}/`,
         }),
         // Определяем эндпоинт для получения истории чата по conversationId
-        getConversationChatHistory: builder.query<ChatHistoryResponse, string>({
-            query: conversationId => `/conversation/chat-history/${conversationId}/`, 
+        getConversationChatHistory: builder.query<ConversationHistoryResponse, string>({
+            query: conversationId => `/conversation/chat-history/${conversationId}/`,
         }),
         // Определяем эндпоинт для ответа админа
         liveAgentReply: builder.mutation<AdminReplyResponse, AdminReplyRequest>({
             query: replyData => ({
-                url: "/bot/reply_with_live_agent/", 
-                method: "POST", 
-                body: replyData, 
+                url: "/bot/reply_with_live_agent/",
+                method: "POST",
+                body: replyData,
             }),
         }),
     }),
