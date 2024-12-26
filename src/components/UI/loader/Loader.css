@@ -12,7 +12,7 @@
 
 .loader-inline {
     display: flex;
-    flex-direction: column; /* Изменено на column */
+    flex-direction: column; 
     justify-content: center;
     align-items: center;
 }

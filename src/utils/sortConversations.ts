@@ -13,7 +13,7 @@ export function sortConversations(data: ChatHistoryItem[]): { conversationId: st
         return acc
     }, {} as Record<string, ChatHistoryItem[]>)
 
-    // Сортировка бесед по дате последнего сообщения
+    // Сортировка бесед по дате последнего сообщения (по убыванию)
     const sortedConversations = Object.entries(groupedConversations)
         .map(([conversationId, items]) => ({
             conversationId,

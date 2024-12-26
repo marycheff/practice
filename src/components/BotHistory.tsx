@@ -1,6 +1,6 @@
 import Loader from "@/components/UI/loader/Loader"
 import { useTokenVerification } from "@/hooks/useTokenVerification"
-import { useGetChatHistoryQuery } from "@/lib/api"
+import { useGetBotHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
 import { formatChatHistory } from "@/utils/formaHistory"
 import CachedIcon from "@mui/icons-material/Cached"
@@ -13,7 +13,7 @@ const BotHistory = () => {
     const colors = tokens(theme.palette.mode)
 
     // Получение истории чата
-    const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
+    const { data: chatHistoryData, isFetching, error, refetch } = useGetBotHistoryQuery()
 
     // Проверка токена при обновлении данных
     const { verifyToken, isLoading } = useTokenVerification()
@@ -53,7 +53,7 @@ const BotHistory = () => {
                         <Box
                             key={index}
                             sx={{
-                                my: 2,
+                                my: 1,
                             }}>
                             {message.question && (
                                 <Box display="flex" justifyContent="flex-end" mb={1}>
@@ -62,6 +62,7 @@ const BotHistory = () => {
                                             backgroundColor: colors.blueAccent[600],
                                             color: colors.grey[100],
                                             p: 1,
+                                            mb: 2,
                                             borderRadius: "8px",
                                             maxWidth: "70%",
                                         }}>

@@ -1,4 +1,3 @@
-import { AdminReplyRequest, AdminReplyResponse } from "@/types/adminReply"
 import { LoginResponse } from "@/types/auth"
 import { ChatHistoryResponse } from "@/types/botHistory"
 import { ConversationHistoryResponse } from "@/types/conversationHistory"
@@ -8,7 +7,6 @@ import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError 
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 
 const { email, password, apiUrl, botId } = validateEnv()
-// Создаем базовый запрос с использованием fetchBaseQuery
 const baseQuery = fetchBaseQuery({
     baseUrl: apiUrl,
     prepareHeaders: headers => {
@@ -20,15 +18,16 @@ const baseQuery = fetchBaseQuery({
     },
 })
 
-// Создаем базовый запрос с повторной аутентификацией
+// Авторизация 2 раза
 const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
     args,
     api,
     extraOptions
 ) => {
-    let result = await baseQuery(args, api, extraOptions) // Выполняем базовый запрос
+    let result = await baseQuery(args, api, extraOptions)
+
+    // Авторизация второй раз в случае ошибки 401 (токен неверный)
     if (result.error && (result.error as FetchBaseQueryError).status === 401) {
-        // Проверка на 401
         deleteCookie("token")
         const refreshResult = await baseQuery(
             {
@@ -44,8 +43,9 @@ const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
         )
         if (refreshResult.data) {
             // Если повторная аутентификация успешна
-            setCookie("token", (refreshResult.data as LoginResponse).data.token) // Устанавливаем токен в куки
-            result = await baseQuery(args, api, extraOptions) // Повторяем исходный запрос
+            setCookie("token", (refreshResult.data as LoginResponse).data.token)
+            // Повторение исходного запроса
+            result = await baseQuery(args, api, extraOptions)
         }
     }
     return result
@@ -53,9 +53,9 @@ const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
 // Создание API
 export const api = createApi({
-    baseQuery: baseQueryWithReAuth, // Устанавливаем базовый запрос с повторной аутентификацией
+    // Установка базового запрос с повторным входом
+    baseQuery: baseQueryWithReAuth,
     endpoints: builder => ({
-        // Определяем эндпоинт для входа
         login: builder.mutation<LoginResponse, void>({
             query: () => ({
                 url: "/login",
@@ -66,32 +66,20 @@ export const api = createApi({
                 },
             }),
         }),
-        // Определяем эндпоинт для получения истории чата
-        getChatHistory: builder.query<ChatHistoryResponse, void>({
+        // Получение истории чата
+        getBotHistory: builder.query<ChatHistoryResponse, void>({
             query: () => `/bot/chat-history/${botId}/`,
         }),
-        // Определяем эндпоинт для получения истории чата по conversationId
-        getConversationChatHistory: builder.query<ConversationHistoryResponse, string>({
+        // Получение истории чата по conversationId
+        getConversationHistory: builder.query<ConversationHistoryResponse, string>({
             query: conversationId => `/conversation/chat-history/${conversationId}/`,
         }),
-        // Определяем эндпоинт для ответа админа
-        liveAgentReply: builder.mutation<AdminReplyResponse, AdminReplyRequest>({
-            query: replyData => ({
-                url: "/bot/reply_with_live_agent/",
-                method: "POST",
-                body: replyData,
-            }),
-        }),
+        // Получение всех бесед
         getRecentChatHistory: builder.query<RecentChatHistoryResponse, void>({
             query: () => `bot/chat-history/recent/`,
         }),
     }),
 })
 
-export const {
-    useLoginMutation,
-    useGetChatHistoryQuery,
-    useGetConversationChatHistoryQuery,
-    useLiveAgentReplyMutation,
-    useGetRecentChatHistoryQuery,
-} = api
+export const { useLoginMutation, useGetBotHistoryQuery, useGetConversationHistoryQuery, useGetRecentChatHistoryQuery } =
+    api

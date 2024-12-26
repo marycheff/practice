@@ -31,12 +31,12 @@ const ChatBot = () => {
                 document.body.removeChild(existingScript)
             }
         }
-    }, [])
+    }, [botId])
 
     return (
         <div
             id="chat-container"
-            className="w-full max-w-4xl h-[543px] bg-white shadow-lg rounded-lg p-4 flex items-center justify-center relative"></div>
+            className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-4 flex items-center justify-center relative"></div>
     )
 }
 

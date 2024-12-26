@@ -1,3 +1,4 @@
+// История чата с ботом
 export interface UserIdentification {
     id: string
     contact_name: string

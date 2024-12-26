@@ -1,6 +1,6 @@
 import Loader from "@/components/UI/loader/Loader"
 import { useTokenVerification } from "@/hooks/useTokenVerification"
-import { useGetConversationChatHistoryQuery } from "@/lib/api"
+import { useGetConversationHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
 import { formatConversationHistory } from "@/utils/formaHistory"
 import CachedIcon from "@mui/icons-material/Cached"
@@ -11,7 +11,7 @@ const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ convers
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
 
-    const { data: chatHistoryData, isFetching, error, refetch } = useGetConversationChatHistoryQuery(conversationId)
+    const { data: chatHistoryData, isFetching, error, refetch } = useGetConversationHistoryQuery(conversationId)
 
     const { verifyToken, isLoading } = useTokenVerification()
     const updateChatHistory = async () => {
@@ -20,7 +20,11 @@ const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ convers
     }
     if (error) {
         if ("originalStatus" in error && error.originalStatus === 404) {
-            return <Typography variant="h3">Неверный ConversationID</Typography>
+            return (
+                <Typography variant="h4" textAlign="center" mt={6} sx={{ color: colors.redAccent[400] }}>
+                    Неверный ConversationID
+                </Typography>
+            )
         }
         return <Typography>Ошибка при получении истории сообщений: {JSON.stringify(error)}</Typography>
     }
@@ -53,7 +57,7 @@ const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ convers
                         <Box
                             key={index}
                             sx={{
-                                my: 2,
+                                my: 1,
                             }}>
                             {message.question && (
                                 <Box display="flex" justifyContent="flex-end" mb={1}>
@@ -62,6 +66,7 @@ const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ convers
                                             backgroundColor: colors.blueAccent[600],
                                             color: colors.grey[100],
                                             p: 1,
+                                            mb: 2,
                                             borderRadius: "8px",
                                             maxWidth: "70%",
                                         }}>

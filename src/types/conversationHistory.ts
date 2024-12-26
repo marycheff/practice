@@ -1,3 +1,4 @@
+// История бесед
 import { Message } from "@/types/botHistory"
 
 export interface ConversationMessage extends Message {
