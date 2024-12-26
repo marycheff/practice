@@ -13,10 +13,8 @@ export function formatChatHistory(response: ChatHistoryResponse): FormattedChatH
 export function formatConversationHistory(response: ConversationHistoryResponse): FormattedConversationHistory {
     return {
         total: response.total,
-        messages: response.data
-            .map(message => ({
-                ...message,
-            }))
-            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+        messages: [...response.data].sort(
+            (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        ),
     }
 }

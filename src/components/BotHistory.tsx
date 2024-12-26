@@ -2,7 +2,7 @@ import Loader from "@/components/UI/loader/Loader"
 import { useTokenVerification } from "@/hooks/useTokenVerification"
 import { useGetChatHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
-import { formatChatHistory } from "@/utils/formatChatHistory"
+import { formatChatHistory } from "@/utils/formaHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import { ReactNode } from "react"
@@ -15,14 +15,14 @@ const BotHistory = () => {
     // Получение истории чата
     const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
 
-    // Проверка токена
+    // Проверка токена при обновлении данных
     const { verifyToken, loading } = useTokenVerification()
     const updateChatHistory = async () => {
         await verifyToken()
         refetch()
     }
 
-    if (error) return <div>Error: {error as ReactNode}.</div>
+    if (error) return <div>Ошибка: {error as ReactNode}.</div>
 
     // Сортировка сообщений по дате
     const formattedChatHistory = chatHistoryData ? formatChatHistory(chatHistoryData) : null

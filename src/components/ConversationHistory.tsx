@@ -1,7 +1,7 @@
 import Loader from "@/components/UI/loader/Loader"
 import { useChatContext } from "@/contexts/ChatContext"
 import { tokens } from "@/theme"
-import { formatConversationHistory } from "@/utils/formatChatHistory"
+import { formatConversationHistory } from "@/utils/formaHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import React from "react"
@@ -45,6 +45,7 @@ const ChatConversationHistory: React.FC = () => {
                         backgroundColor: colors.primary[600],
                         p: 2,
                     }}>
+                    {/* Вывод чата */}
                     {formattedChatHistory.messages.map((message, index) => (
                         <Box
                             key={index}
@@ -75,6 +76,7 @@ const ChatConversationHistory: React.FC = () => {
                                             borderRadius: "8px",
                                             maxWidth: "70%",
                                         }}>
+                                        {/* Обработка ответа бота */}
                                         {message.answer.trim() === "I don't know." ||
                                         message.answer.trim() === "Sorry! I'm not sure what you're saying." ? (
                                             <Typography>[бот не знает ответ]</Typography>
@@ -85,6 +87,7 @@ const ChatConversationHistory: React.FC = () => {
                                 </Box>
                             )}
                             <Typography variant="caption" color={colors.grey[600]} ml={0.3}>
+                                {/* Обработка отображения автора ответа */}
                                 {message.created_at} |{" "}
                                 {message.chat_via === "bot"
                                     ? "бот"

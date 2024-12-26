@@ -4,19 +4,21 @@ import Loader from "@/components/UI/loader/Loader"
 import { useGetRecentChatHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
 import { sortConversations } from "@/utils/sortConversations"
-import { Box, List, ListItem, ListItemText, Typography, useTheme } from "@mui/material"
-import { useRouter } from "next/navigation" // Используем навигацию App Router
+import { List, ListItem, ListItemText, Typography, useTheme } from "@mui/material"
+import { useRouter } from "next/navigation"
 import React from "react"
 
 const ConversationList: React.FC = () => {
     // Настройка темы
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
+
+    // Получение беседы
     const { data: recentChatHistory, isLoading, error } = useGetRecentChatHistoryQuery()
-    const router = useRouter() // Теперь это из next/navigation
+    const router = useRouter()
 
     if (isLoading) return <Loader isOverlay={true} />
-    if (error) return <Typography color="error">Error loading conversations</Typography>
+    if (error) return <Typography variant="h2">Ошибка загрузки Бесед</Typography>
 
     const sortedConversations = recentChatHistory ? sortConversations(recentChatHistory.data) : []
 
@@ -27,8 +29,10 @@ const ConversationList: React.FC = () => {
     return (
         <List>
             {sortedConversations.map(({ conversationId, latestMessage }) => (
-                <Box
+                <ListItem
                     key={conversationId}
+                    disablePadding
+                    onClick={() => handleConversationClick(conversationId)}
                     sx={{
                         borderRadius: "8px",
                         backgroundColor: colors.blueAccent[600],
@@ -38,13 +42,12 @@ const ConversationList: React.FC = () => {
                         "&:hover": {
                             backgroundColor: colors.blueAccent[700],
                         },
-                    }}
-                    onClick={() => handleConversationClick(conversationId)} 
-                >
-                    <ListItem disablePadding>
-                        <ListItemText primary={conversationId} secondary={`Последнее сообщение: ${latestMessage}`} />
-                    </ListItem>
-                </Box>
+                    }}>
+                    <ListItemText
+                        primary={`Диалог: ${conversationId}`}
+                        secondary={`Последнее сообщение: ${latestMessage}`}
+                    />
+                </ListItem>
             ))}
         </List>
     )

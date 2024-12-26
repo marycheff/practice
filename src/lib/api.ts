@@ -1,14 +1,16 @@
 import { AdminReplyRequest, AdminReplyResponse } from "@/types/adminReply"
-import { LoginRequest, LoginResponse } from "@/types/auth"
+import { LoginResponse } from "@/types/auth"
 import { ChatHistoryResponse } from "@/types/botHistory"
 import { ConversationHistoryResponse } from "@/types/conversationHistory"
 import { RecentChatHistoryResponse } from "@/types/recentChatHistory"
+import { validateEnv } from "@/utils/validateEnv"
 import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 
+const { email, password, apiUrl, botId } = validateEnv()
 // Создаем базовый запрос с использованием fetchBaseQuery
 const baseQuery = fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: apiUrl,
     prepareHeaders: headers => {
         const token = getCookie("token")
         if (token) {
@@ -33,8 +35,8 @@ const baseQueryWithReAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
                 url: "/login",
                 method: "POST",
                 body: {
-                    email: process.env.NEXT_PUBLIC_API_EMAIL,
-                    password: process.env.NEXT_PUBLIC_API_PASSWORD,
+                    email: email,
+                    password: password,
                 },
             },
             api,
@@ -54,16 +56,19 @@ export const api = createApi({
     baseQuery: baseQueryWithReAuth, // Устанавливаем базовый запрос с повторной аутентификацией
     endpoints: builder => ({
         // Определяем эндпоинт для входа
-        login: builder.mutation<LoginResponse, LoginRequest>({
-            query: credentials => ({
+        login: builder.mutation<LoginResponse, void>({
+            query: () => ({
                 url: "/login",
                 method: "POST",
-                body: credentials,
+                body: {
+                    email: email,
+                    password: password,
+                },
             }),
         }),
         // Определяем эндпоинт для получения истории чата
         getChatHistory: builder.query<ChatHistoryResponse, void>({
-            query: () => `/bot/chat-history/${process.env.NEXT_PUBLIC_BOT_ID}/`,
+            query: () => `/bot/chat-history/${botId}/`,
         }),
         // Определяем эндпоинт для получения истории чата по conversationId
         getConversationChatHistory: builder.query<ConversationHistoryResponse, string>({
