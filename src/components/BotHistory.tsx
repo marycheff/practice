@@ -16,7 +16,7 @@ const BotHistory = () => {
     const { data: chatHistoryData, isFetching, error, refetch } = useGetChatHistoryQuery()
 
     // Проверка токена при обновлении данных
-    const { verifyToken, loading } = useTokenVerification()
+    const { verifyToken, isLoading } = useTokenVerification()
     const updateChatHistory = async () => {
         await verifyToken()
         refetch()
@@ -40,7 +40,7 @@ const BotHistory = () => {
                     <CachedIcon />
                 </IconButton>
             </Box>
-            {loading || isFetching ? (
+            {isLoading || isFetching ? (
                 <Loader isOverlay={false} text="Загрузка сообщений" />
             ) : formattedChatHistory && formattedChatHistory.messages.length > 0 ? (
                 <Box

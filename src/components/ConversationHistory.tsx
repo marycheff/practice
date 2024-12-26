@@ -1,26 +1,30 @@
 import Loader from "@/components/UI/loader/Loader"
-import { useChatContext } from "@/contexts/ChatContext"
+import { useTokenVerification } from "@/hooks/useTokenVerification"
+import { useGetConversationChatHistoryQuery } from "@/lib/api"
 import { tokens } from "@/theme"
 import { formatConversationHistory } from "@/utils/formaHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
 import React from "react"
 
-const ChatConversationHistory: React.FC = () => {
-    // Настройка темы
+const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ conversationId }) => {
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
 
-    // Получение истории чата
-    const { chatHistory, isLoading, error, refreshChatHistory } = useChatContext()
+    const { data: chatHistoryData, isFetching, error, refetch } = useGetConversationChatHistoryQuery(conversationId)
 
+    const { verifyToken, isLoading } = useTokenVerification()
+    const updateChatHistory = async () => {
+        await verifyToken()
+        refetch()
+    }
     if (error) {
         if ("originalStatus" in error && error.originalStatus === 404) {
-            return <p>Неверный ConversationID</p>
+            return <Typography variant="h3">Неверный ConversationID</Typography>
         }
-        return <p>Ошибка при получении истории сообщений: {JSON.stringify(error)}</p>
+        return <Typography>Ошибка при получении истории сообщений: {JSON.stringify(error)}</Typography>
     }
-    const formattedChatHistory = chatHistory ? formatConversationHistory(chatHistory) : null
+    const formattedChatHistory = chatHistoryData ? formatConversationHistory(chatHistoryData) : null
 
     return (
         <Box
@@ -32,11 +36,11 @@ const ChatConversationHistory: React.FC = () => {
                 color: colors.grey[100],
             }}>
             <Box display="flex" justifyContent="flex-end">
-                <IconButton onClick={refreshChatHistory}>
+                <IconButton onClick={updateChatHistory}>
                     <CachedIcon />
                 </IconButton>
             </Box>
-            {isLoading ? (
+            {isLoading || isFetching ? (
                 <Loader isOverlay={false} text="Загрузка сообщений" />
             ) : formattedChatHistory && formattedChatHistory.messages.length > 0 ? (
                 <Box
@@ -45,7 +49,6 @@ const ChatConversationHistory: React.FC = () => {
                         backgroundColor: colors.primary[600],
                         p: 2,
                     }}>
-                    {/* Вывод чата */}
                     {formattedChatHistory.messages.map((message, index) => (
                         <Box
                             key={index}
@@ -86,8 +89,8 @@ const ChatConversationHistory: React.FC = () => {
                                     </Box>
                                 </Box>
                             )}
+                            {/* Обработка отображения автора ответа */}
                             <Typography variant="caption" color={colors.grey[600]} ml={0.3}>
-                                {/* Обработка отображения автора ответа */}
                                 {message.created_at} |{" "}
                                 {message.chat_via === "bot"
                                     ? "бот"

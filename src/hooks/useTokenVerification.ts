@@ -5,11 +5,11 @@ import { useCallback, useState } from "react"
 
 export const useTokenVerification = () => {
     const { handleLogin } = useAuth()
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const verifyToken = useCallback(async () => {
-        setLoading(true)
+        setIsLoading(true)
         setError(null)
         try {
             const token = getCookie("token") as string
@@ -25,7 +25,7 @@ export const useTokenVerification = () => {
             setError("Неизвестная ошибка:\n" + err)
             return false
         } finally {
-            setLoading(false)
+            setIsLoading(false)
         }
     }, [handleLogin])
 
@@ -41,5 +41,5 @@ export const useTokenVerification = () => {
         [verifyToken, error]
     )
 
-    return { verifyToken, verifyTokenAndRefetch, loading, error }
+    return { verifyToken, verifyTokenAndRefetch, isLoading, error }
 }

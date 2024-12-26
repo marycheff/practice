@@ -1,6 +1,6 @@
 "use client"
 
-import ChatBot from "@/components/ChatBot"
+import ChatBot from "@/components/ChatBotWidget"
 import { tokens } from "@/theme"
 import { Box, Button, Container, Typography, useTheme } from "@mui/material"
 import Link from "next/link"

@@ -7,15 +7,13 @@ import { Box, Container, Typography } from "@mui/material"
 
 import { useEffect } from "react"
 
-const ReplyPage = () => {
-
-
+const ConversationsPage = () => {
     // Проверка токена
-    const { verifyToken, loading } = useTokenVerification()
+    const { verifyToken, isLoading } = useTokenVerification()
     useEffect(() => {
         verifyToken()
     }, [verifyToken])
-    if (loading) return <Loader isOverlay={true} />
+    if (isLoading) return <Loader isOverlay={true} />
 
     return (
         <Container maxWidth="md">
@@ -29,4 +27,4 @@ const ReplyPage = () => {
     )
 }
 
-export default ReplyPage
+export default ConversationsPage

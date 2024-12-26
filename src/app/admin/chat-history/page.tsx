@@ -12,11 +12,11 @@ const ChatHistoryPage = () => {
     const colors = tokens(theme.palette.mode)
 
     // Проверка токена
-    const { verifyToken, loading } = useTokenVerification()
+    const { verifyToken, isLoading } = useTokenVerification()
     useEffect(() => {
         verifyToken()
     }, [verifyToken])
-    if (loading) return <Loader isOverlay={true} />
+    if (isLoading) return <Loader isOverlay={true} />
 
     return (
         <Container maxWidth="md">

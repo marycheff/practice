@@ -23,7 +23,7 @@ const ConversationList: React.FC = () => {
     const sortedConversations = recentChatHistory ? sortConversations(recentChatHistory.data) : []
 
     const handleConversationClick = (conversationId: string) => {
-        router.push(`/admin/conversations/reply/${conversationId}`)
+        router.push(`/admin/conversations/${conversationId}`)
     }
 
     return (

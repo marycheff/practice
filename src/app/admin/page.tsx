@@ -12,7 +12,7 @@ const AdminPage = () => {
     const colors = tokens(theme.palette.mode)
 
     // Проверка токена
-    const { verifyToken, loading } = useTokenVerification()
+    const { verifyToken, isLoading } = useTokenVerification()
     const [isTokenValid, setIsTokenValid] = useState<boolean | null>(null)
     useEffect(() => {
         const checkAuth = async () => {
@@ -22,7 +22,7 @@ const AdminPage = () => {
         checkAuth()
     }, [verifyToken])
 
-    if (loading || isTokenValid === null) {
+    if (isLoading || isTokenValid === null) {
         return <Loader isOverlay={true} />
     }
 

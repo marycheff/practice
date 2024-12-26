@@ -1,6 +1,6 @@
 export const validateEnv = () => {
-    const email = process.env.NEXT_PUBLIC_API_EMAIL
-    const password = process.env.NEXT_PUBLIC_API_PASSWORD
+    const email = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+    const password = process.env.NEXT_PUBLIC_ADMIN_PASSWORD
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
     const botId = process.env.NEXT_PUBLIC_BOT_ID
     if (!email || !password || !apiUrl || !botId) {
