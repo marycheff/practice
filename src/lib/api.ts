@@ -6,7 +6,7 @@ import { validateEnv } from "@/utils/validateEnv"
 import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
 
-const { email, password, apiUrl, botId } = validateEnv()
+const { email, password, apiUrl } = validateEnv()
 const baseQuery = fetchBaseQuery({
     baseUrl: apiUrl,
     prepareHeaders: headers => {
@@ -68,7 +68,7 @@ export const api = createApi({
         }),
         // Получение истории чата
         getBotHistory: builder.query<ChatHistoryResponse, void>({
-            query: () => `/bot/chat-history/${botId}/`,
+            query: () => `/bot/chat-history/2a1cc9a4-b118-4275-a3f9-54e8a637f293/`,
         }),
         // Получение истории чата по conversationId
         getConversationHistory: builder.query<ConversationHistoryResponse, string>({

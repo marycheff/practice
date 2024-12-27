@@ -8,9 +8,8 @@ import { sortConversations } from "@/utils/sortConversations"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, List, ListItem, ListItemText, Typography, useTheme } from "@mui/material"
 import { useRouter } from "next/navigation"
-import React from "react"
 
-const ConversationList: React.FC = () => {
+const ConversationList = () => {
     // Настройка темы
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
@@ -32,7 +31,6 @@ const ConversationList: React.FC = () => {
     const handleConversationClick = (conversationId: string) => {
         router.push(`/admin/conversations/${conversationId}`)
     }
-
     return (
         <>
             <Box display="flex" justifyContent="flex-end">
@@ -40,26 +38,35 @@ const ConversationList: React.FC = () => {
                     <CachedIcon />
                 </IconButton>
             </Box>
-            <List>
-                {sortedConversations.map(({ conversationId, latestMessage }) => (
-                    <ListItem
-                        key={conversationId}
-                        disablePadding
-                        onClick={() => handleConversationClick(conversationId)}
-                        sx={{
-                            borderRadius: "8px",
-                            backgroundColor: colors.blueAccent[600],
-                            marginBottom: 2,
-                            padding: 2,
-                            cursor: "pointer",
-                            "&:hover": {
-                                backgroundColor: colors.blueAccent[700],
-                            },
-                        }}>
-                        <ListItemText primary={conversationId} secondary={`Последнее сообщение: ${latestMessage}`} />
-                    </ListItem>
-                ))}
-            </List>
+            {recentChatHistory?.total && recentChatHistory?.total > 0 ? (
+                <List>
+                    {sortedConversations.map(({ conversationId, latestMessage }) => (
+                        <ListItem
+                            key={conversationId}
+                            disablePadding
+                            onClick={() => handleConversationClick(conversationId)}
+                            sx={{
+                                borderRadius: "8px",
+                                backgroundColor: colors.blueAccent[600],
+                                marginBottom: 2,
+                                padding: 2,
+                                cursor: "pointer",
+                                "&:hover": {
+                                    backgroundColor: colors.blueAccent[700],
+                                },
+                            }}>
+                            <ListItemText
+                                primary={conversationId}
+                                secondary={`Последнее сообщение: ${latestMessage}`}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
+            ) : (
+                <Typography variant="h4" color={colors.grey[500]} textAlign="center">
+                    Нет бесед
+                </Typography>
+            )}
         </>
     )
 }

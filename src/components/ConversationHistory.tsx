@@ -5,9 +5,9 @@ import { tokens } from "@/theme"
 import { formatConversationHistory } from "@/utils/formaHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
-import React from "react"
+import { FC } from "react"
 
-const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ conversationId }) => {
+const ChatConversationHistory: FC<{ conversationId: string }> = ({ conversationId }) => {
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
 
@@ -29,7 +29,7 @@ const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ convers
         return <Typography>Ошибка при получении истории сообщений: {JSON.stringify(error)}</Typography>
     }
     const formattedChatHistory = chatHistoryData ? formatConversationHistory(chatHistoryData) : null
-
+    console.log(chatHistoryData)
     return (
         <Box
             sx={{
@@ -46,7 +46,7 @@ const ChatConversationHistory: React.FC<{ conversationId: string }> = ({ convers
             </Box>
             {isLoading || isFetching ? (
                 <Loader isOverlay={false} text="Загрузка сообщений" />
-            ) : formattedChatHistory && formattedChatHistory.messages.length > 0 ? (
+            ) : chatHistoryData && formattedChatHistory && formattedChatHistory.messages.length > 0 ? (
                 <Box
                     sx={{
                         borderRadius: "15px",

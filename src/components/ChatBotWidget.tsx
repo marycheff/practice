@@ -1,10 +1,8 @@
 "use client"
 
-import { validateEnv } from "@/utils/validateEnv"
 import { useEffect } from "react"
 
 const ChatBot = () => {
-    const { botId } = validateEnv()
     useEffect(() => {
         const scriptId = "chatbot-script"
 
@@ -14,7 +12,7 @@ const ChatBot = () => {
             script.async = true
             script.id = scriptId
             script.src = "https://chatbot-dist.s3.us-east-2.amazonaws.com/chatbot/fullpage_build_chatbot.js"
-            script.setAttribute("chatbotId", `${botId}`)
+            script.setAttribute("chatbotId", "2a1cc9a4-b118-4275-a3f9-54e8a637f293")
             script.setAttribute("targetId", "chat-container")
             document.body.appendChild(script)
         }
@@ -31,7 +29,7 @@ const ChatBot = () => {
                 document.body.removeChild(existingScript)
             }
         }
-    }, [botId])
+    }, [])
 
     return (
         <div

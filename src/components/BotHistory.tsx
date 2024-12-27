@@ -5,7 +5,6 @@ import { tokens } from "@/theme"
 import { formatChatHistory } from "@/utils/formaHistory"
 import CachedIcon from "@mui/icons-material/Cached"
 import { Box, IconButton, Typography, useTheme } from "@mui/material"
-import { ReactNode } from "react"
 
 const BotHistory = () => {
     // Настройка темы
@@ -21,8 +20,26 @@ const BotHistory = () => {
         await verifyToken()
         refetch()
     }
+    console.log(chatHistoryData)
 
-    if (error) return <div>Ошибка: {error as ReactNode}.</div>
+    if (error) {
+        if ("status" in error && error.status === 400) {
+            return (
+                <>
+                    <Box display="flex" justifyContent="flex-end">
+                        <IconButton onClick={updateChatHistory}>
+                            <CachedIcon />
+                        </IconButton>
+                    </Box>
+                    <Typography variant="h4" color={colors.grey[500]} textAlign="center">
+                        Нет такого бота или нет сообщений
+                    </Typography>
+                </>
+            )
+        }
+
+        return <Typography>Ошибка при получении истории сообщений: {JSON.stringify(error)}</Typography>
+    }
 
     // Сортировка сообщений по дате
     const formattedChatHistory = chatHistoryData ? formatChatHistory(chatHistoryData) : null
